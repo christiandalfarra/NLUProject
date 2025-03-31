@@ -9,7 +9,7 @@ from tqdm import tqdm
 from model import *
 from utils import *
 
-DEVICE = 'cpu'
+DEVICE = 'cuda:0'
 def train_loop(data, optimizer, criterion, model, clip=5):
     model.train()
     loss_array = []
