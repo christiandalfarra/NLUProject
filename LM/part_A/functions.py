@@ -108,6 +108,7 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience):
     best_model.to(DEVICE)
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)    
     print('Test ppl: ', final_ppl)
+    return final_ppl
 # To save the model
 # path = 'bin/model_name.pt'
 # torch.save(model.state_dict(), path)

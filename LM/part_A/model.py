@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -11,8 +10,8 @@ class LM_RNN(nn.Module):
         # Token ids to vectors, we will better see this in the next lab 
         self.embedding = nn.Embedding(output_size, emb_size, padding_idx=pad_index)
         # Pytorch's RNN layer: https://pytorch.org/docs/stable/generated/torch.nn.RNN.html
-        self.rnn = nn.LSTM(emb_size, hidden_size, n_layers, bidirectional=False, batch_first=True)
-        #self.rnn = nn.RNN(emb_size, hidden_size, n_layers, bidirectional=False, batch_first=True)    
+        #self.rnn = nn.LSTM(emb_size, hidden_size, n_layers, bidirectional=False, batch_first=True)
+        self.rnn = nn.RNN(emb_size, hidden_size, n_layers, bidirectional=False, batch_first=True)    
         self.pad_token = pad_index
         # Linear layer to project the hidden layer to our output space 
         self.output = nn.Linear(hidden_size, output_size)
