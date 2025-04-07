@@ -1,7 +1,8 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-DEVICE = 'cuda:0'
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class LM_RNN(nn.Module):
     def __init__(self, emb_size, hidden_size, output_size, pad_index=0, out_dropout=0.1,

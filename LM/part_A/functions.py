@@ -9,7 +9,7 @@ from tqdm import tqdm
 from model import *
 from utils import *
 
-DEVICE = 'cuda:0'
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def train_loop(data, optimizer, criterion, model, clip=5):
     model.train()
     loss_array = []
