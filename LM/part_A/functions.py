@@ -89,7 +89,7 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience):
     #If the PPL is too high try to change the learning rate
     for epoch in pbar:
         loss = train_loop(train_loader, optimizer, criterion_train, model, clip)    
-        if epoch % 1 == 0:
+        if epoch % 5 == 0:
             sampled_epochs.append(epoch)
             losses_train.append(np.asarray(loss).mean())
             ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
