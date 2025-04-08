@@ -65,7 +65,7 @@ def init_weights(mat):
                 if m.bias != None:
                     m.bias.data.fill_(0.01)
 
-def training(hid_size,emb_size,lr,clip,n_epochs, patience):
+def training(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
     train_loader, dev_loader, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
 
@@ -106,8 +106,12 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience):
                 break # Not nice but it keeps the code clean
 
     best_model.to(DEVICE)
-    final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)    
+    final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
     print('Test ppl: ', final_ppl)
+    #save weights
+    path = f'bin/{experiment}'
+    torch.save(model.state_dict(), path)
+    
     return final_ppl
 # To save the model
 # path = 'bin/model_name.pt'
