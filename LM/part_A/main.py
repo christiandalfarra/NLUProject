@@ -9,7 +9,7 @@ if __name__ == "__main__":
     #lr = 0.05 #fixed after trials
     lr = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5]
     clip = 5
-    n_epochs = 20
+    n_epochs = 100
     patience = 3
     results = []
     for rate in lr:
@@ -17,6 +17,15 @@ if __name__ == "__main__":
         results.append(result)
         print(f'lr = {rate} -> PPL: {result}')
     
+plt.figure(figsize=(10, 6))
+plt.plot(lr, results, marker='o', linestyle='-', color='b')
+plt.xscale('log')  # Learning rates are often better on a log scale
+plt.yticks(range(150, 700, 50))  # Y-axis ticks from 150 to 650 in steps of 50
+plt.xlabel('Learning Rate')
+plt.ylabel('Result')
+plt.title('Results vs Learning Rate')
+plt.grid(True, which='both', linestyle='--', alpha=0.5)
+plt.savefig('plot.png', dpi=300)
     #organizzati le varie iterazioni con i parametri che vuoi valutare
     #usando RNN
     # da testare ora con LSTM
