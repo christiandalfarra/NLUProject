@@ -109,7 +109,7 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
     print('Test ppl: ', final_ppl)
     #save weights
-    path = f'bin/{experiment}'
+    path = f'{experiment}'
     torch.save(model.state_dict(), path)
     
     return final_ppl
