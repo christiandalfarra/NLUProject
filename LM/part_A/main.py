@@ -9,7 +9,7 @@ if __name__ == "__main__":
     #lr = 0.05 #fixed after trials
     lr = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5]
     clip = 5
-    n_epochs = 100
+    n_epochs = 20
     patience = 3
     results = []
     for rate in lr:
