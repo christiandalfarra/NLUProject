@@ -19,7 +19,6 @@ click==8.1.7
 cloudpathlib==0.16.0
 comm==0.2.1
 confection==0.1.4
-contourpy==1.2.0
 cycler==0.12.1
 cymem==2.0.8
 DataProperty==1.0.1

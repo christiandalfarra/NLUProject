@@ -80,7 +80,7 @@ class PennTreeBank (data.Dataset):
             res.append(tmp_seq)
         return res
 
-DEVICE = 'cuda:0'
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 def collate_fn(data, pad_token,device = DEVICE):
     def merge(sequences):
         '''

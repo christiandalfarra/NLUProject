@@ -13,7 +13,7 @@ if __name__ == "__main__":
     patience = 3
     results = []
     for rate in lr:
-        result = training(hid_size, emb_size, lr, clip, n_epochs, patience, f'RNN_lr_{rate}')
+        result = training(hid_size, emb_size, rate, clip, n_epochs, patience, f'RNN_lr_{rate}')
         results.append(result)
         print(f'lr = {rate} -> PPL: {result}')
     
