@@ -77,8 +77,6 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
     criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
     
-    #Wrtite the code to load the datasets and to run your functions
-    # Print the results
     losses_train = []
     losses_dev = []
     sampled_epochs = []
@@ -86,7 +84,6 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
     best_model = None
     pbar = tqdm(range(1,n_epochs))
     
-    #If the PPL is too high try to change the learning rate
     for epoch in pbar:
         loss = train_loop(train_loader, optimizer, criterion_train, model, clip)    
         if epoch % 5 == 0:
@@ -95,15 +92,15 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
             ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
             losses_dev.append(np.asarray(loss_dev).mean())
             pbar.set_description("PPL: %f" % ppl_dev)
-            if  ppl_dev < best_ppl: # the lower, the better
+            if  ppl_dev < best_ppl:
                 best_ppl = ppl_dev
                 best_model = copy.deepcopy(model).to('cpu')
                 patience = 3
             else:
                 patience -= 1
                 
-            if patience <= 0: # Early stopping with patience
-                break # Not nice but it keeps the code clean
+            if patience <= 0:
+                break
 
     best_model.to(DEVICE)
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
@@ -113,10 +110,3 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
     torch.save(model.state_dict(), path)
     
     return final_ppl
-# To save the model
-# path = 'bin/model_name.pt'
-# torch.save(model.state_dict(), path)
-# To load the model you need to initialize it
-# model = LM_RNN(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(device)
-# Then you load it
-# model.load_state_dict(torch.load(path))
