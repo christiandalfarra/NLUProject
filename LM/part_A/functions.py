@@ -94,7 +94,7 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
             pbar.set_description("PPL: %f" % ppl_dev)
             if  ppl_dev < best_ppl:
                 best_ppl = ppl_dev
-                best_model = copy.deepcopy(model).to('cpu')
+                best_model = copy.deepcopy(model).to(DEVICE)
                 patience = 3
             else:
                 patience -= 1
