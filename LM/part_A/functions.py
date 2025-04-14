@@ -83,6 +83,7 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
     best_ppl = math.inf
     best_model = None
     pbar = tqdm(range(1,n_epochs))
+    print(f'Testing with hidden size : {hid_size}  embedding size : {emb_size} learning rate : {lr}')
     
     for epoch in pbar:
         loss = train_loop(train_loader, optimizer, criterion_train, model, clip)    

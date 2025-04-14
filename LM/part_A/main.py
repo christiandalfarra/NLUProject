@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 from functions import *
 
 if __name__ == "__main__":
-    hid_size = 200
+    hid_size = 250
     emb_size = 300
     #lr = 0.05 #fixed after trials
     lr = 0.05
     clip = 5
     n_epochs = 100
     patience = 3
-    result = training(250, emb_size, lr, clip, n_epochs, patience, 'RNN_hidden_size250_lr0.05')
+    result = training(hid_size, emb_size, lr, clip, n_epochs, patience, 'RNN_hidden_size250')
     print(result)
