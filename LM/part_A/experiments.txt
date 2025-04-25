@@ -1,0 +1,19 @@
+Part A
+learning rate = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5]
+set the lr to 0.01 try with (hid_size,emb_size) basiline was (200,300): 
+    (250,300), (150,300), (200,250), (200,350) fatto 
+
+set emb_size = 300, hid_size = 250, lr = 0.05 substitute the RNN module with LSTM new baseline under 250 PPLù
+provare con emb_size 350 hid_size 250 lr=0.05, oppure con un lr scheduler
+
+LSTM 198.11
+add dropout layers:
+    one after the embedding layer, 
+    one before the last linear layer
+substitute SGD with AdamW
+
+part B
+Starting from the `LM_RNN` in which you replaced the RNN with a LSTM model, apply the following regularisation techniques:
+- Weight Tying 
+- Variational Dropout (no DropConnect)
+- Non-monotonically Triggered AvSGD 
