@@ -5,6 +5,22 @@ set the lr to 0.01 try with (hid_size,emb_size) basiline was (200,300):
 
 set emb_size = 300, hid_size = 250, lr = 0.05 substitute the RNN module with LSTM new baseline under 250 PPLù
 provare con emb_size 350 hid_size 250 lr=0.05, oppure con un lr scheduler
+tutti quelli su questa tabella hanno il modulo RNN
+(e = emb_size, h = hid_size, l = lr)
+|    Model spec     |  PPL  |
+|-------------------|-------|
+|e300 h200 l0.001   | 579.85|
+|e300 h200 l0.005   | 357.78|
+|e300 h200 l0.01    | 296.05|
+|e300 h200 l0.05    | 188.90|
+|e300 h200 l0.1     | 167.02|
+|e300 h200 l0.5     | 157.66|
+|e350 h200 l0.01    | 291.98|
+|e250 h200 l0.01    | 299.25|
+|e300 h150 l0.01    | 315.36|
+|e300 h250 l0.01    | 280.09|
+|e300 h250 l0.05    | 179.65|
+|e350 h250 l0.05    | 176.18|
 
 LSTM 198.11
 add dropout layers:
