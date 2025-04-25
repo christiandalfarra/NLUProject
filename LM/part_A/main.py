@@ -6,7 +6,6 @@ from functions import *
 if __name__ == "__main__":
     hid_size = 250
     emb_size = 350
-    #lr = 0.05 #fixed after trials
     lr = 0.05
     clip = 5
     n_epochs = 100
