@@ -69,8 +69,8 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
     train_loader, dev_loader, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
 
-    #model = LM_RNN(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
-    model = LM_LSTM(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
+    model = LM_RNN(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
+    #model = LM_LSTM(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
     model.apply(init_weights)
 
     #optimizer da cambiare
