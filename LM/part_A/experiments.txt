@@ -21,6 +21,8 @@ tutti quelli su questa tabella hanno il modulo RNN
 |e300 h250 l0.01    | 280.09|
 |e300 h250 l0.05    | 179.65|
 |e350 h250 l0.05    | 176.18|
+|e350 h300 l0.05    | 171.39|
+|e350 h300 l0.1     | 157.63|
 
 LSTM 198.11
 add dropout layers:
