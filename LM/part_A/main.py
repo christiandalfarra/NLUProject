@@ -10,7 +10,7 @@ if __name__ == "__main__":
     clip = 5
     n_epochs = 100
     patience = 3
-    result = training(hid_size, emb_size, 0.05, clip, n_epochs, patience, 'RNN_embsize350_hidsize300_lr0.05')
+    result = training(hid_size, emb_size, 0.05, clip, n_epochs, patience, 'LSTM_lr0.05')
     print(result)
-    result = training(hid_size, emb_size, 0.1, clip, n_epochs, patience, 'RNN_embsize350_hidsize300_lr0.1')
+    result = training(hid_size, emb_size, 0.1, clip, n_epochs, patience, 'LSTM_lr0.1')
     print(result)
