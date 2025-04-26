@@ -23,8 +23,8 @@ model with emb_size 350 and hid_size 300, replace RNN module with an LSTM
 |   LSTM l0.05      | 185.89|
 |   LSTM l0.1       | 162.48|
 emb_size 400 hid_size 350 LSTM
-|   LSTM l0.05      | 185.89|
-|   LSTM l0.1       | 162.48|
+|   LSTM l0.05      | 177.77|
+|   LSTM l0.1       | 157.08|
 
 add dropout layers:
     one after the embedding layer, 
