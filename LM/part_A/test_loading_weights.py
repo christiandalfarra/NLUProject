@@ -37,3 +37,6 @@ results.append(testing(300, 250, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embs
 
 results.append(testing(300, 250, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize300_hidsize250_lr0.05.pt', train_loader, dev_loader, test_loader))
 results.append(testing(350, 250, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize250_lr0.05.pt', train_loader, dev_loader, test_loader))
+
+results.append(testing(350, 300, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize300_lr0.05.pt', train_loader, dev_loader, test_loader))
+results.append(testing(350, 300, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize300_lr0.1.pt', train_loader, dev_loader, test_loader))
