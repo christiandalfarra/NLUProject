@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from functions import *
 
 if __name__ == "__main__":
-    hid_size = 300
-    emb_size = 350
+    hid_size = 350
+    emb_size = 400
     lr = 0.05
     clip = 5
     n_epochs = 100
