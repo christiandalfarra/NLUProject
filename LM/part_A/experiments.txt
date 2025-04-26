@@ -1,10 +1,5 @@
 Part A
-learning rate = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5]
-set the lr to 0.01 try with (hid_size,emb_size) basiline was (200,300): 
-    (250,300), (150,300), (200,250), (200,350) fatto 
 
-set emb_size = 300, hid_size = 250, lr = 0.05 substitute the RNN module with LSTM new baseline under 250 PPLù
-provare con emb_size 350 hid_size 250 lr=0.05, oppure con un lr scheduler
 tutti quelli su questa tabella hanno il modulo RNN
 (e = emb_size, h = hid_size, l = lr)
 |    Model spec     |  PPL  |
@@ -25,8 +20,11 @@ tutti quelli su questa tabella hanno il modulo RNN
 |e350 h300 l0.1     | 162.90|
 
 model with emb_size 350 and hid_size 300, replace RNN module with an LSTM
-|   LSTM l0.05      | 169.86|
-|   LSTM l0.1       | 162.90|
+|   LSTM l0.05      | 185.89|
+|   LSTM l0.1       | 162.48|
+emb_size 400 hid_size 350 LSTM
+|   LSTM l0.05      | 185.89|
+|   LSTM l0.1       | 162.48|
 
 add dropout layers:
     one after the embedding layer, 
@@ -34,6 +32,7 @@ add dropout layers:
 substitute SGD with AdamW
 
 part B
+
 Starting from the `LM_RNN` in which you replaced the RNN with a LSTM model, apply the following regularisation techniques:
 - Weight Tying 
 - Variational Dropout (no DropConnect)

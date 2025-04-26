@@ -6,8 +6,20 @@ from functions import *
 from utils import getLoaders
 
 DEVICE= torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-def testing(emb_size, hid_size, vocab_len, pad_index, model_path, train_loader, dev_loader, test_loader):
+def testing_RNN(emb_size, hid_size, vocab_len, pad_index, model_path, train_loader, dev_loader, test_loader):
     model = LM_RNN(emb_size, hid_size, vocab_len, pad_index).to(DEVICE)
+    model.load_state_dict(torch.load(model_path, map_location=DEVICE))
+    model.to(DEVICE)
+
+    # Set to evaluation mode (if inferencing)
+    model.eval()
+    print('Model loaded and set to evaluation mode.')
+    criterion_eval = nn.CrossEntropyLoss(ignore_index=pad_index, reduction='sum')
+    final_ppl,  _ = eval_loop(test_loader, criterion_eval, model)
+    print('Test ppl: ', final_ppl)
+    return final_ppl
+def testing_LSTM(emb_size, hid_size, vocab_len, pad_index, model_path, train_loader, dev_loader, test_loader):
+    model = LM_LSTM(emb_size, hid_size, vocab_len, pad_index).to(DEVICE)
     model.load_state_dict(torch.load(model_path, map_location=DEVICE))
     model.to(DEVICE)
 
@@ -23,20 +35,26 @@ train_loader, dev_loader, test_loader, lang = getLoaders()
 vocab_len = len(lang.word2id)
 results = []
 
-results.append(testing(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.001.pt', train_loader, dev_loader, test_loader))
-results.append(testing(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.005.pt', train_loader, dev_loader, test_loader))
-results.append(testing(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.01.pt', train_loader, dev_loader, test_loader))
-results.append(testing(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.05.pt', train_loader, dev_loader, test_loader))
-results.append(testing(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.1.pt', train_loader, dev_loader, test_loader))
-results.append(testing(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.5.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.001.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.005.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.01.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.05.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.1.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(300, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_lr_0.5.pt', train_loader, dev_loader, test_loader))
 
-results.append(testing(350, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize200.pt', train_loader, dev_loader, test_loader))
-results.append(testing(250, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize250_hidsize200.pt', train_loader, dev_loader, test_loader))
-results.append(testing(300, 150, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize300_hidsize150.pt', train_loader, dev_loader, test_loader))
-results.append(testing(300, 250, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize300_hidsize250.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(350, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize200.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(250, 200, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize250_hidsize200.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(300, 150, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize300_hidsize150.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(300, 250, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize300_hidsize250.pt', train_loader, dev_loader, test_loader))
 
-results.append(testing(300, 250, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize300_hidsize250_lr0.05.pt', train_loader, dev_loader, test_loader))
-results.append(testing(350, 250, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize250_lr0.05.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(300, 250, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize300_hidsize250_lr0.05.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(350, 250, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize250_lr0.05.pt', train_loader, dev_loader, test_loader))
 
-results.append(testing(350, 300, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize300_lr0.05.pt', train_loader, dev_loader, test_loader))
-results.append(testing(350, 300, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize300_lr0.1.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(350, 300, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize300_lr0.05.pt', train_loader, dev_loader, test_loader))
+results.append(testing_RNN(350, 300, vocab_len, lang.word2id['<pad>'], 'bin/RNN_embsize350_hidsize300_lr0.1.pt', train_loader, dev_loader, test_loader))
+
+results.append(testing_LSTM(350, 300, vocab_len, lang.word2id['<pad>'], 'bin/LSTM_lr0.05.pt', train_loader, dev_loader, test_loader))
+results.append(testing_LSTM(350, 300, vocab_len, lang.word2id['<pad>'], 'bin/LSTM_lr0.1.pt', train_loader, dev_loader, test_loader))
+
+results.append(testing_LSTM(400, 350, vocab_len, lang.word2id['<pad>'], 'bin/LSTM_embsize400_hidsize350_lr0.05', train_loader, dev_loader, test_loader))
+results.append(testing_LSTM(400, 350, vocab_len, lang.word2id['<pad>'], 'bin/LSTM_embsize400_hidsize350_lr0.1', train_loader, dev_loader, test_loader))
