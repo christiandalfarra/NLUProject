@@ -111,3 +111,15 @@ def training(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
     torch.save(model.state_dict(), path)
     
     return final_ppl
+
+def grid_search_hyperparameters_RNN(hid_sizes, emb_sizes, lrs, clip, n_epochs, patience):
+    results = []
+    i = 0
+    for lr in lrs:
+        for hid_size in hid_sizes:
+            for emb_size in emb_sizes:
+                result = training(hid_size, emb_size, lr, clip, n_epochs, patience, f'exp{i}_RNN_embsize{emb_size}_hidsize{hid_size}_lr{lr}')
+                results.append(result)
+                print(result)
+                i += 1
+    return results
