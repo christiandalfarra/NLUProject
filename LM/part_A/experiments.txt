@@ -1,5 +1,11 @@
 Part A
 
+first experimment was simply increment the lr from 0.0001 to 0.01
+second experiment a grid search for the other parameters of the net emb size = [250,300,350], hid size = [250,300,350], the training was done with two lr = [0.01, 0.05]
+best net performance emb 350, hid 350, lr 0.05 PPL 166.38
+
+third experiment try the best net founded by grid search (emb 350, hid 350) with other values of lr = [0.1, 0.5, 1, 2, 5]
+
 tutti quelli su questa tabella hanno il modulo RNN
 (e = emb_size, h = hid_size, l = lr)
 |    Model spec     |  PPL  |

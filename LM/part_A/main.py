@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 from functions import *
 
 if __name__ == "__main__":
-    hid_sizes = [250, 300, 350]
-    emb_sizes = [250, 300, 350]
-    lrs = [0.01, 0.05, 0.1, 0.5, 1, 2]
+    hid_sizes = [350]
+    emb_sizes = [350]
+    lrs = [0.1, 0.5, 1, 2]
     results = grid_search_hyperparameters_RNN(hid_sizes, emb_sizes, lrs, clip=5, n_epochs=100, patience=3)
-    
-    
