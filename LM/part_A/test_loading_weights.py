@@ -47,12 +47,12 @@ train_loader, dev_loader, test_loader, lang = getLoaders()
 vocab_len = len(lang.word2id)
 results = []
 
-#testing_RNN(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp0_RNN_embsize350_hidsize350_lr0.1.pt', train_loader, dev_loader, test_loader)
-#testing_RNN(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp1_RNN_embsize350_hidsize350_lr0.5.pt', train_loader, dev_loader, test_loader)
-#testing_RNN(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp2_RNN_embsize350_hidsize350_lr0.05.pt', train_loader, dev_loader, test_loader)
+testing_RNN(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp0_RNN_embsize350_hidsize350_lr0.1.pt', train_loader, dev_loader, test_loader)
+testing_RNN(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp1_RNN_embsize350_hidsize350_lr0.5.pt', train_loader, dev_loader, test_loader)
+testing_RNN(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp2_RNN_embsize350_hidsize350_lr0.05.pt', train_loader, dev_loader, test_loader)
 
-#testing_RNN(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp4_LSTM_embsize350_hidsize350_lr0.1.pt', train_loader, dev_loader, test_loader)
-#testing_LSTM(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp5_LSTM_embsize350_hidsize350_lr0.5.pt', train_loader, dev_loader, test_loader)
+testing_LSTM(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp3_LSTM_embsize350_hidsize350_lr0.1.pt', train_loader, dev_loader, test_loader)
+testing_LSTM(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp4_LSTM_embsize350_hidsize350_lr0.5.pt', train_loader, dev_loader, test_loader)
 
-#testing_LSTM_DROPOUT_EMB_LAYER(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp6_LSTM_doemb0.5_lr0.1.pt', train_loader, dev_loader, test_loader)
-#testing_LSTM_DROPOUT_EMB_LAYER(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp7_LSTM_doemb0.5_lr0.5.pt', train_loader, dev_loader, test_loader)
+testing_LSTM_DROPOUT_EMB_LAYER(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp6_LSTM_doemb0.5_lr0.1.pt', train_loader, dev_loader, test_loader)
+testing_LSTM_DROPOUT_EMB_LAYER(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp7_LSTM_doemb0.5_lr0.5.pt', train_loader, dev_loader, test_loader)
