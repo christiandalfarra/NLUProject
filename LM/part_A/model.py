@@ -102,13 +102,13 @@ class VariationalDropoutLSTM(nn.Module):
     def __init__(self, vocab_size, embed_size, hidden_size, num_layers, dropout_p=0.5):
         super().__init__()
         self.embed = nn.Embedding(vocab_size, embed_size)
-        self.dropout = nn.Dropout(dropout_p)
+        self.dropout = VariationalDropout(dropout_p)
         self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
         self.fc = nn.Linear(hidden_size, vocab_size)
         
     def forward(self, x, hidden=None):
         x = self.embed(x)
-        x = self.dropout(x)
+        x = self.dropout(x)  # Same mask applied to all timesteps
         x, hidden = self.lstm(x, hidden)
         x = self.fc(x)
         return x, hidden
