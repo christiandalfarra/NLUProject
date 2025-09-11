@@ -9,5 +9,5 @@ if __name__ == "__main__":
     lrs = [0.05, 0.1, 0.5]
     i = 2
     for lr in lrs:
-        results = training(hid_size, emb_size, lr, clip = 5 , n_epochs = 100 , patience = 3 , experiment=f'exp{i}_LSTM_embsize{emb_size}_hidsize{hid_size}_lr{lr}')
+        results = training_SGD(hid_size, emb_size, lr, clip = 5 , n_epochs = 100 , patience = 3 , experiment=f'exp{i}_LSTM_embsize{emb_size}_hidsize{hid_size}_lr{lr}')
         i+=1
