@@ -27,4 +27,4 @@ param ={
 
 if __name__ == "__main__":
     i = 20
-    training(param, experiment=f'exp{i}_{param['model_arch']}_embsize{param['emb_size']}_hidsize{param['hidden_size']}_lr{param['lr']}')
+    training(param, experiment=f"exp{i}_{param['model_arch']}_embsize{param['emb_size']}_hidsize{param['hidden_size']}_lr{param['lr']}")
