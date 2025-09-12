@@ -14,7 +14,7 @@ from functions import *
     'AdamW' : the AdamW optimizer
     """
 param ={
-    'model_arch' : 'RNN',
+    'model_arch' : 'LSTM',
     'emb_size': 350,
     'hidden_size': 350,
     'lr' : 1,
@@ -26,5 +26,5 @@ param ={
 }
 
 if __name__ == "__main__":
-    i = 20
+    i = 30
     training(param, experiment=f"exp{i}_{param['model_arch']}_embsize{param['emb_size']}_hidsize{param['hidden_size']}_lr{param['lr']}")
