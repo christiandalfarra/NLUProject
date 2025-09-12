@@ -17,7 +17,6 @@ tutti quelli su questa tabella hanno il modulo RNN
 fourth experiment change the RNN module with LSTM one, test with three lr [0.1, 0.5]
 |   LSTM l0.1       | 157.28| best LSTM
 |   LSTM l0.5       | 165.69|
-provare ad aumentare la capacita della rete 400 400
 
 fifth experiment add dropout layer after the embedding one
 

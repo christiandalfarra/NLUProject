@@ -14,10 +14,10 @@ from functions import *
     'AdamW' : the AdamW optimizer
     """
 param ={
-    'model_arch' : 'LSTM',
-    'emb_size': 400,
-    'hidden_size': 400,
-    'lr' : 1,
+    'model_arch' : 'LSTM_DOEMB_LAST_LAYER',
+    'emb_size': 350,
+    'hidden_size': 350,
+    'lr' : 0.5,
     'clip': 5,
     'n_epochs': 100,
     'patience': 3,
@@ -26,5 +26,5 @@ param ={
 }
 
 if __name__ == "__main__":
-    i = 30
-    training(param, experiment=f"exp{i}_{param['model_arch']}_embsize{param['emb_size']}_hidsize{param['hidden_size']}_lr{param['lr']}")
+    i = 40
+    training(param, experiment=f"exp{i}_{param['model_arch']}_lr{param['lr']}")
