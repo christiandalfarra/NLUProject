@@ -11,18 +11,18 @@ tutti quelli su questa tabella hanno il modulo RNN
 |    Model spec     |  PPL  |
 |-------------------|-------|
 | e350 h350 lr0.05  | 164.02|
-| e350 h350 lr0.1   | 158.87|
+| e350 h350 lr0.1   | 158.87| best RNN
 | e350 h350 lr0.5   | 167.70|
 
-fourth experiment change the RNN module with LSTM one, test with three lr [0.05, 0.1, 0.5]
-da ritrainare perche ho perso i pesi
-|   LSTM l0.1       | 157.28|
+fourth experiment change the RNN module with LSTM one, test with three lr [0.1, 0.5]
+|   LSTM l0.1       | 157.28| best LSTM
 |   LSTM l0.5       | 165.69|
+provare ad aumentare la capacita della rete 400 400
 
 fifth experiment add dropout layer after the embedding one
 
 |LSTM l0.1 doemb0.5 | 171.30|
-|LSTM l0.5 doemb0.5 | 132.09|
+|LSTM l0.5 doemb0.5 | 132.09| best LSTM embdo
 
 sixth experiment add dropout layer before the last linear layer
 |LSTM l0.1 doemb0.5 | 000.00|

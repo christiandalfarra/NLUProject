@@ -15,8 +15,8 @@ from functions import *
     """
 param ={
     'model_arch' : 'LSTM',
-    'emb_size': 350,
-    'hidden_size': 350,
+    'emb_size': 400,
+    'hidden_size': 400,
     'lr' : 1,
     'clip': 5,
     'n_epochs': 100,

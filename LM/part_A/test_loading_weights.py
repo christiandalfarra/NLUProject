@@ -16,6 +16,7 @@ def testing_RNN(emb_size, hid_size, vocab_len, pad_index, model_path, train_load
     print('Model loaded and set to evaluation mode.')
     criterion_eval = nn.CrossEntropyLoss(ignore_index=pad_index, reduction='sum')
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, model)
+    print('model tested', model_path)
     print('Test ppl: ', final_ppl)
     return final_ppl
 def testing_LSTM(emb_size, hid_size, vocab_len, pad_index, model_path, train_loader, dev_loader, test_loader):
@@ -28,6 +29,7 @@ def testing_LSTM(emb_size, hid_size, vocab_len, pad_index, model_path, train_loa
     print('Model loaded and set to evaluation mode.')
     criterion_eval = nn.CrossEntropyLoss(ignore_index=pad_index, reduction='sum')
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, model)
+    print('model tested', model_path)
     print('Test ppl: ', final_ppl)
     return final_ppl
 def testing_LSTM_DROPOUT_EMB_LAYER(emb_size, hid_size, vocab_len, pad_index, model_path, train_loader, dev_loader, test_loader):
@@ -40,6 +42,7 @@ def testing_LSTM_DROPOUT_EMB_LAYER(emb_size, hid_size, vocab_len, pad_index, mod
     print('Model loaded and set to evaluation mode.')
     criterion_eval = nn.CrossEntropyLoss(ignore_index=pad_index, reduction='sum')
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, model)
+    print('model tested', model_path)
     print('Test ppl: ', final_ppl)
     return final_ppl
 
@@ -56,3 +59,4 @@ testing_LSTM(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp4_LSTM_embsize3
 
 testing_LSTM_DROPOUT_EMB_LAYER(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp6_LSTM_doemb0.5_lr0.1.pt', train_loader, dev_loader, test_loader)
 testing_LSTM_DROPOUT_EMB_LAYER(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp7_LSTM_doemb0.5_lr0.5.pt', train_loader, dev_loader, test_loader)
+testing_LSTM(350,350,vocab_len, lang.word2id["<pad>"], 'bin/exp30_LSTM_embsize350_hidsize350_lr1.pt', train_loader, dev_loader, test_loader)
