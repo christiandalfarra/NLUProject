@@ -69,7 +69,8 @@ def training(param, experiment):
     train_loader, dev_loader, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
 
-    if param['model_arch'] == 'RNN':
+    arch = param['model_arch']
+    if arch == 'RNN':
         model = LM_RNN(
             param['emb_size'],
             param['hidden_size'],
