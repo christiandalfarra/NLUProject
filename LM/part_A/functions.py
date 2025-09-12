@@ -68,18 +68,42 @@ def init_weights(mat):
 def training(param, experiment):
     train_loader, dev_loader, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
-    match param['model_arch']:
-        case 'RNN':
-            model = LM_RNN(param['emb_size'], param['hidden_size'], vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
-        case 'LSTM':
-            model = LM_LSTM(param['emb_size'], param['hidden_size'], vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
-        case 'LSTM_DOEMB_LAYER':
-            model = LM_LSTM_DROP_EMB_LAYER(param['emb_size'], param['hidden_size'], vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
-        case 'LSTM_DOEMB_LAST_LAYER':
-            model = LM_LSTM_DROP_EMB_LAST_LAYER(param['emb_size'], param['hidden_size'], vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
-        case _:
-            print('Error: model architecture not recognized')
-            return None
+
+    if param['model_arch'] == 'RNN':
+        model = LM_RNN(
+            param['emb_size'],
+            param['hidden_size'],
+            vocab_len,
+            pad_index=lang.word2id["<pad>"]
+            ).to(DEVICE)
+
+    elif arch == 'LSTM':
+        model = LM_LSTM(
+            param['emb_size'],
+            param['hidden_size'],
+            vocab_len,
+            pad_index=lang.word2id["<pad>"]
+            ).to(DEVICE)
+
+    elif arch == 'LSTM_DOEMB_LAYER':
+        model = LM_LSTM_DROP_EMB_LAYER(
+            param['emb_size'],
+            param['hidden_size'],
+            vocab_len,
+            pad_index=lang.word2id["<pad>"]
+            ).to(DEVICE)
+
+    elif arch == 'LSTM_DOEMB_LAST_LAYER':
+        model = LM_LSTM_DROP_EMB_LAST_LAYER(
+            param['emb_size'],
+            param['hidden_size'],
+            vocab_len,
+            pad_index=lang.word2id["<pad>"]
+            ).to(DEVICE)
+
+    else:
+        print('Error: model architecture not recognized')
+        return None
     model.apply(init_weights)
 
     optimizer = optim.AdamW(model.parameters(), lr=param['lr']) if param['optimizer'] == 'AdamW' else optim.SGD(model.parameters(), lr=param['lr'])
