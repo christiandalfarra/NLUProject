@@ -2,12 +2,29 @@
 # Please write your fuctions or classes in the functions.py
 import matplotlib.pyplot as plt
 from functions import *
+"""
+    'model_arch' have different options related to the experiments:
+    'RNN' : Simple RNN
+    'LSTM' : Simple LSTM
+    'LSTM_DOEMB_LAYER' : LSTM with dropout after embedding layer
+    'LSTM_DOEMB_LAST_LAYER' : LSTM with dropout after embedding layer and before the last linear layer
+
+    'optimizer' have two options (on default is setted to SGD):
+    'SGD' : Stochastic Gradient Descent
+    'AdamW' : the AdamW optimizer
+    """
+param ={
+    'model_arch' : 'RNN',
+    'emb_size': 350,
+    'hidden_size': 350,
+    'lr' : 1,
+    'clip': 5,
+    'n_epochs': 100,
+    'patience': 3,
+
+    'optimizer': 'SGD'
+}
 
 if __name__ == "__main__":
-    hid_size = 350
-    emb_size = 350
-    lrs = [0.1, 0.5]
-    i = 3
-    for lr in lrs:
-        results = training_SGD(hid_size, emb_size, lr, clip = 5 , n_epochs = 100 , patience = 3 , experiment=f'exp{i}_LSTM_embsize{emb_size}_hidsize{hid_size}_lr{lr}')
-        i+=1
+    i = 20
+    training(param, experiment=f'exp{i}_{param['model_arch']}_embsize{param['emb_size']}_hidsize{param['hidden_size']}_lr{param['lr']}')

@@ -4,6 +4,8 @@ import torch.utils.data as data
 from functools import partial
 from torch.utils.data import DataLoader
 
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 def read_file(path, eos_token="<eos>"):
     output = []
     with open(path, "r") as f:
@@ -80,8 +82,7 @@ class PennTreeBank (data.Dataset):
             res.append(tmp_seq)
         return res
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-def collate_fn(data, pad_token,device = DEVICE):
+def collate_fn(data, pad_token):
     def merge(sequences):
         '''
         merge from batch * sent_len to batch * max_len 
@@ -108,8 +109,8 @@ def collate_fn(data, pad_token,device = DEVICE):
     source, _ = merge(new_item["source"])
     target, lengths = merge(new_item["target"])
     
-    new_item["source"] = source.to(device)
-    new_item["target"] = target.to(device)
+    new_item["source"] = source.to(DEVICE)
+    new_item["target"] = target.to(DEVICE)
     new_item["number_tokens"] = sum(lengths)
     return new_item
 

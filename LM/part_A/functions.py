@@ -65,11 +65,67 @@ def init_weights(mat):
                 if m.bias != None:
                     m.bias.data.fill_(0.01)
 
+def training(param, experiment):
+    train_loader, dev_loader, test_loader, lang = getLoaders()
+    vocab_len = len(lang.word2id)
+    match param['model_arch']:
+        case 'RNN':
+            model = LM_RNN(param['emb_size'], param['hidden_size'], vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
+        case 'LSTM':
+            model = LM_LSTM(param['emb_size'], param['hidden_size'], vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
+        case 'LSTM_DOEMB_LAYER':
+            model = LM_LSTM_DROP_EMB_LAYER(param['emb_size'], param['hidden_size'], vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
+        case 'LSTM_DOEMB_LAST_LAYER':
+            model = LM_LSTM_DROP_EMB_LAST_LAYER(param['emb_size'], param['hidden_size'], vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
+        case _:
+            print('Error: model architecture not recognized')
+            return None
+    model.apply(init_weights)
+
+    optimizer = optim.AdamW(model.parameters(), lr=param['lr']) if param['optimizer'] == 'AdamW' else optim.SGD(model.parameters(), lr=param['lr'])
+    
+    criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
+    criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
+
+    losses_train = []
+    losses_dev = []
+    sampled_epochs = []
+    best_ppl = math.inf
+    best_model = None
+    pbar = tqdm(range(1,param['n_epochs']))
+    
+    for epoch in pbar:
+        loss = train_loop(train_loader, optimizer, criterion_train, model, param['clip'])    
+        if epoch % 5 == 0:
+            sampled_epochs.append(epoch)
+            losses_train.append(np.asarray(loss).mean())
+            ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
+            losses_dev.append(np.asarray(loss_dev).mean())
+            pbar.set_description("PPL: %f" % ppl_dev)
+            if  ppl_dev < best_ppl:
+                best_ppl = ppl_dev
+                best_model = copy.deepcopy(model).to(DEVICE)
+                patience = 3
+            else:
+                patience -= 1
+                
+            if patience <= 0:
+                break
+
+    best_model.to(DEVICE)
+    final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
+    print('Test ppl: ', final_ppl)
+    #save weights
+    path = f'bin/{experiment}.pt'
+    torch.save(model.state_dict(), path)
+    
+    return final_ppl
+
 def training_SGD(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
     train_loader, dev_loader, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
 
-    model = LM_LSTM_DROM_EMB_LAST_LAYER(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
+    model = LM_LSTM_DROP_EMB_LAST_LAYER(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
     model.apply(init_weights)
 
     #optimizer da cambiare
@@ -157,13 +213,13 @@ def training_AdamW(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
     
     return final_ppl
 
-def grid_search_hyperparameters_RNN(hid_sizes, emb_sizes, lrs, clip, n_epochs, patience):
+def grid_search_hyperparameters_RNN(param):
     results = []
     i = 0
-    for lr in lrs:
-        for hid_size in hid_sizes:
-            for emb_size in emb_sizes:
-                result = training_SGD(hid_size, emb_size, lr, clip, n_epochs, patience, f'exp{i}_RNN_embsize{emb_size}_hidsize{hid_size}_lr{lr}')
+    for lr in param['lr']:
+        for hid_size in param['hid_size']:
+            for emb_size in param['emb_size']:
+                result = (param, f'exp{i}_RNN_embsize{emb_size}_hidsize{hid_size}_lr{lr}')
                 results.append(result)
                 print(result)
                 i += 1
