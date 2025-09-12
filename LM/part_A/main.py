@@ -17,7 +17,7 @@ param ={
     'model_arch' : 'LSTM_DOEMB_LAST_LAYER',
     'emb_size': 350,
     'hidden_size': 350,
-    'lr' : 0.5,
+    'lr' : 1,
     'clip': 5,
     'n_epochs': 100,
     'patience': 3,
@@ -26,5 +26,5 @@ param ={
 }
 
 if __name__ == "__main__":
-    i = 40
+    i = 50
     training(param, experiment=f"exp{i}_{param['model_arch']}_lr{param['lr']}")
