@@ -17,7 +17,7 @@ param ={
     'model_arch' : 'LSTM_DOEMB_LAST_LAYER',
     'emb_size': 350,
     'hidden_size': 350,
-    'lr' : 0.0001,
+    'lr' : 0.0005,
     'clip': 5,
     'n_epochs': 100,
     'patience': 3,
