@@ -24,9 +24,9 @@ fifth experiment add dropout layer after the embedding one
 |LSTM l0.5 doemb0.5 | 132.09| best LSTM embdo
 
 sixth experiment add dropout layer before the last linear layer
-|LSTM l1 doemb0.5 | 000.00|
+|LSTM l0.5 doemb0.5 | 131.21|
         dolast0.2
-|LSTM l0.5 doemb0.5 | 131.62|
+|LSTM l1 doemb0.5   | 124.74|
         dolast0.2
 
 seventh experiment change the optimizer with the AdamW

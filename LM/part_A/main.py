@@ -17,14 +17,14 @@ param ={
     'model_arch' : 'LSTM_DOEMB_LAST_LAYER',
     'emb_size': 350,
     'hidden_size': 350,
-    'lr' : 1,
+    'lr' : 0.0001,
     'clip': 5,
     'n_epochs': 100,
     'patience': 3,
 
-    'optimizer': 'SGD'
+    'optimizer': 'AdamW'
 }
 
 if __name__ == "__main__":
     i = 50
-    training(param, experiment=f"exp{i}_{param['model_arch']}_lr{param['lr']}")
+    training(param, experiment=f"exp{i}_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}")
