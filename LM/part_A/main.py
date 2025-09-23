@@ -19,7 +19,7 @@ param ={
     'hidden_size': 350,
     'lr' : 0.5,
     'clip': 5,
-    'n_epochs': 5,
+    'n_epochs': 100,
     'patience': 3,
 
     'optimizer': 'SGD'
