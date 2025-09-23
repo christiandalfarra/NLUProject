@@ -46,7 +46,7 @@ results = []
 
 #testing_LSTM(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp6_LSTM_doemb0.5_lr0.1.pt', train_loader, dev_loader, test_loader)
 #testing_LSTM(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp7_LSTM_doemb0.5_lr0.5.pt', train_loader, dev_loader, test_loader)
-testing_LSTM(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp40_LSTM_DOEMB_LAST_LAYER_lr0.5.pt', train_loader, dev_loader, test_loader)
-testing_LSTM(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp50_LSTM_DOEMB_LAST_LAYER_lr1.pt', train_loader, dev_loader, test_loader)
+#testing_LSTM(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp40_LSTM_DOEMB_LAST_LAYER_lr0.5.pt', train_loader, dev_loader, test_loader)
+#testing_LSTM(350, 350, vocab_len, lang.word2id["<pad>"], 'bin/exp50_LSTM_DOEMB_LAST_LAYER_lr1.pt', train_loader, dev_loader, test_loader)
 testing_LSTM(350,350,vocab_len, lang.word2id["<pad>"], 'bin/exp50_LSTM_DOEMB_LAST_LAYER_lr0.0001_AdamW.pt', train_loader, dev_loader, test_loader)
 testing_LSTM(350,350,vocab_len, lang.word2id["<pad>"], 'bin/exp50_LSTM_DOEMB_LAST_LAYER_lr0.0005_AdamW.pt', train_loader, dev_loader, test_loader)

@@ -22,7 +22,7 @@ param ={
     'n_epochs': 5,
     'patience': 3,
 
-    'optimizer': 'AdamW'
+    'optimizer': 'SGD'
 }
 
 if __name__ == "__main__":
