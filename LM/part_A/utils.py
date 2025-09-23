@@ -115,9 +115,9 @@ def collate_fn(data, pad_token):
     return new_item
 
 def getLoaders():
-    train_raw = read_file("dataset/PennTreeBank/ptb.train.txt")
-    dev_raw = read_file("dataset/PennTreeBank/ptb.valid.txt")
-    test_raw = read_file("dataset/PennTreeBank/ptb.test.txt")
+    train_raw = read_file("../dataset/PennTreeBank/ptb.train.txt")
+    dev_raw = read_file("../dataset/PennTreeBank/ptb.valid.txt")
+    test_raw = read_file("../dataset/PennTreeBank/ptb.test.txt")
     vocab = get_vocab(train_raw, ["<pad>", "<eos>"])
     lang = Lang(train_raw, ["<pad>", "<eos>"])
     train_dataset = PennTreeBank(train_raw, lang)

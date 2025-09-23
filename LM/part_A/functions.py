@@ -6,6 +6,7 @@ import math
 import copy
 import numpy as np
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 from model import *
 from utils import *
 
@@ -65,6 +66,29 @@ def init_weights(mat):
                 if m.bias != None:
                     m.bias.data.fill_(0.01)
 
+def plot_loss(epochs, loss_train, loss_validation, path):
+    fig, ax = plt.subplots()
+    ax.plot(epochs, loss_train, label='Training Loss')
+    ax.plot(epochs, loss_validation, label='Validation Loss')
+    ax.set_title('Training and Validation Loss')
+    ax.set_xlabel('Epochs')
+    ax.set_ylabel('Loss')
+    ax.legend()
+    ax.grid(True)
+    fig.tight_layout()
+    fig.savefig(path)
+
+def plot_perplexity(epochs, perplexity, path):
+    fig, ax = plt.subplots()
+    ax.plot(epochs, perplexity, label='Validation PPL')
+    ax.set_title('Validation PPL')
+    ax.set_xlabel('Epochs')
+    ax.set_ylabel('PPL')
+    ax.legend()
+    ax.grid(True)
+    fig.tight_layout()
+    fig.savefig(path)
+
 def training(param, experiment):
     train_loader, dev_loader, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
@@ -103,8 +127,7 @@ def training(param, experiment):
             ).to(DEVICE)
 
     else:
-        print('Error: model architecture not recognized')
-        return None
+        raise ValueError("Architecture not recognized. Available architectures: RNN, LSTM, LSTM_DOEMB_LAYER, LSTM_DOEMB_LAST_LAYER")
     model.apply(init_weights)
 
     optimizer = optim.AdamW(model.parameters(), lr=param['lr']) if param['optimizer'] == 'AdamW' else optim.SGD(model.parameters(), lr=param['lr'])
@@ -114,6 +137,7 @@ def training(param, experiment):
 
     losses_train = []
     losses_dev = []
+    perplexity = []
     sampled_epochs = []
     best_ppl = math.inf
     best_model = None
@@ -121,11 +145,12 @@ def training(param, experiment):
     
     for epoch in pbar:
         loss = train_loop(train_loader, optimizer, criterion_train, model, param['clip'])    
-        if epoch % 5 == 0:
+        if epoch % 1 == 0:
             sampled_epochs.append(epoch)
             losses_train.append(np.asarray(loss).mean())
             ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
             losses_dev.append(np.asarray(loss_dev).mean())
+            perplexity.append(ppl_dev)
             pbar.set_description("PPL: %f" % ppl_dev)
             if  ppl_dev < best_ppl:
                 best_ppl = ppl_dev
@@ -143,99 +168,10 @@ def training(param, experiment):
     #save weights
     path = f'bin/{experiment}.pt'
     torch.save(model.state_dict(), path)
-    
-    return final_ppl
+    #plot the curves for the trainng models
+    plot_loss(sampled_epochs, losses_train, losses_dev, f'plots/{experiment}_loss.png')
+    plot_perplexity(sampled_epochs, perplexity, f'plots/{experiment}_ppl.png')
 
-def training_SGD(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
-    train_loader, dev_loader, test_loader, lang = getLoaders()
-    vocab_len = len(lang.word2id)
-
-    model = LM_LSTM_DROP_EMB_LAST_LAYER(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
-    model.apply(init_weights)
-
-    #optimizer da cambiare
-    optimizer = optim.SGD(model.parameters(), lr=lr)
-    criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
-    criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
-    
-    losses_train = []
-    losses_dev = []
-    sampled_epochs = []
-    best_ppl = math.inf
-    best_model = None
-    pbar = tqdm(range(1,n_epochs))
-    
-    for epoch in pbar:
-        loss = train_loop(train_loader, optimizer, criterion_train, model, clip)    
-        if epoch % 5 == 0:
-            sampled_epochs.append(epoch)
-            losses_train.append(np.asarray(loss).mean())
-            ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
-            losses_dev.append(np.asarray(loss_dev).mean())
-            pbar.set_description("PPL: %f" % ppl_dev)
-            if  ppl_dev < best_ppl:
-                best_ppl = ppl_dev
-                best_model = copy.deepcopy(model).to(DEVICE)
-                patience = 3
-            else:
-                patience -= 1
-                
-            if patience <= 0:
-                break
-
-    best_model.to(DEVICE)
-    final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
-    print('Test ppl: ', final_ppl)
-    #save weights
-    path = f'bin/{experiment}.pt'
-    torch.save(model.state_dict(), path)
-    
-    return final_ppl
-
-def training_AdamW(hid_size,emb_size,lr,clip,n_epochs, patience,experiment):
-    train_loader, dev_loader, test_loader, lang = getLoaders()
-    vocab_len = len(lang.word2id)
-
-    model = LM_LSTM(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(DEVICE)
-    model.apply(init_weights)
-
-    #optimizer da cambiare
-    optimizer = optim.AdamW(model.parameters(), lr=lr)
-    criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
-    criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
-    
-    losses_train = []
-    losses_dev = []
-    sampled_epochs = []
-    best_ppl = math.inf
-    best_model = None
-    pbar = tqdm(range(1,n_epochs))
-    
-    for epoch in pbar:
-        loss = train_loop(train_loader, optimizer, criterion_train, model, clip)    
-        if epoch % 5 == 0:
-            sampled_epochs.append(epoch)
-            losses_train.append(np.asarray(loss).mean())
-            ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
-            losses_dev.append(np.asarray(loss_dev).mean())
-            pbar.set_description("PPL: %f" % ppl_dev)
-            if  ppl_dev < best_ppl:
-                best_ppl = ppl_dev
-                best_model = copy.deepcopy(model).to(DEVICE)
-                patience = 3
-            else:
-                patience -= 1
-                
-            if patience <= 0:
-                break
-
-    best_model.to(DEVICE)
-    final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
-    print('Test ppl: ', final_ppl)
-    #save weights
-    path = f'bin/{experiment}.pt'
-    torch.save(model.state_dict(), path)
-    
     return final_ppl
 
 def grid_search_hyperparameters_RNN(param):
@@ -249,3 +185,4 @@ def grid_search_hyperparameters_RNN(param):
                 print(result)
                 i += 1
     return results
+

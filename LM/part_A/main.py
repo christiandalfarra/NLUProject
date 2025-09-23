@@ -14,12 +14,12 @@ from functions import *
     'AdamW' : the AdamW optimizer
     """
 param ={
-    'model_arch' : 'LSTM_DOEMB_LAST_LAYER',
+    'model_arch' : 'RNN',
     'emb_size': 350,
     'hidden_size': 350,
-    'lr' : 0.0005,
+    'lr' : 0.5,
     'clip': 5,
-    'n_epochs': 100,
+    'n_epochs': 5,
     'patience': 3,
 
     'optimizer': 'AdamW'
