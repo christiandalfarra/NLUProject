@@ -17,7 +17,7 @@ param ={
     'model_arch' : 'RNN',
     'emb_size': 350,
     'hidden_size': 350,
-    'lr' : 0.5,
+    'lr' : 0.1,
     'clip': 5,
     'n_epochs': 100,
     'patience': 3,
