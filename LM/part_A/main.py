@@ -25,7 +25,7 @@ param ={
     'emb_dropout': 0.5,
     'out_dropout': 0.2,
 
-    'lr' : 0.0005,
+    'lr' : 0.0001,
     'clip': 5,
     'n_epochs': 100,
     'patience': 3,

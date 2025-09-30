@@ -26,6 +26,8 @@ sixth experiment add dropout layer before the last linear layer
 seventh experiment change the optimizer with the AdamW 
 take the model with LSTM dropout before the last and after the emb and change the optimizer
 try with different learning rate
+
+|    LSTM l0.0001   | 121.89|
 |    LSTM l0.0005   | 112.72|
 
 part B
