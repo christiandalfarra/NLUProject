@@ -34,7 +34,7 @@ class LM_LSTM(nn.Module):
         return output
     
 class LM_LSTM_DROP_EMB_LAYER(nn.Module):
-    def __init__(self, emb_size, hidden_size, output_size, pad_index=0, n_layers=1, emb_dropout=0.5):
+    def __init__(self, emb_size, hidden_size, output_size, emb_dropout=0.5, pad_index=0, n_layers=1):
         super(LM_LSTM_DROP_EMB_LAYER,self).__init__()
         self.embedding = nn.Embedding(output_size, emb_size, padding_idx=pad_index)
         self.dropout_emb = nn.Dropout(emb_dropout)  # Dropout after embedding
@@ -50,7 +50,7 @@ class LM_LSTM_DROP_EMB_LAYER(nn.Module):
         return output
     
 class LM_LSTM_DROP_EMB_LAST_LAYER(nn.Module):
-    def __init__(self, emb_size, hidden_size, output_size, pad_index=0, n_layers=1, emb_dropout=0.5, out_dropout=0.2):
+    def __init__(self, emb_size, hidden_size, output_size, emb_dropout=0.5, out_dropout=0.2, pad_index=0, n_layers=1):
         super(LM_LSTM_DROP_EMB_LAST_LAYER, self).__init__()  # Fixed class name here
         self.embedding = nn.Embedding(output_size, emb_size, padding_idx=pad_index)
         self.dropout_emb = nn.Dropout(emb_dropout)  # Dropout after embedding

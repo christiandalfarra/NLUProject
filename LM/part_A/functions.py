@@ -115,7 +115,8 @@ def training(param, experiment):
             param['emb_size'],
             param['hidden_size'],
             vocab_len,
-            pad_index=lang.word2id["<pad>"]
+            pad_index=lang.word2id["<pad>"],
+            emb_dropout=param['emb_dropout']
             ).to(DEVICE)
 
     elif arch == 'LSTM_DOEMB_LAST_LAYER':
@@ -123,7 +124,9 @@ def training(param, experiment):
             param['emb_size'],
             param['hidden_size'],
             vocab_len,
-            pad_index=lang.word2id["<pad>"]
+            pad_index=lang.word2id["<pad>"],
+            emb_dropout=param['emb_dropout'],
+            out_dropout=param['out_dropout']
             ).to(DEVICE)
 
     else:
@@ -174,13 +177,53 @@ def training(param, experiment):
 
     return final_ppl
 
-def grid_search_hyperparameters_RNN(param):
+def testing(param, model_path):
+    train_loader, dev_loader, test_loader, lang = getLoaders()
+    vocab_len = len(lang.word2id)
+    pad_index = lang.word2id["<pad>"]
+    if param['model_arch'] == 'RNN':
+        model = LM_RNN(
+            param['emb_size'],
+            param['hidden_size'],
+            vocab_len,
+            pad_index
+            ).to(DEVICE)
+    elif param['model_arch'] in ['LSTM', 'LSTM_DOEMB_LAYER', 'LSTM_DOEMB_LAST_LAYER']:
+        model = LM_LSTM(
+            param['emb_size'],
+            param['hidden_size'],
+            vocab_len,
+            pad_index
+            ).to(DEVICE)
+    else:
+        print('Error: model architecture not recognized')
+        return None
+    
+    model.load_state_dict(torch.load(model_path, map_location=DEVICE))
+    model.to(DEVICE)
+
+    # Set to evaluation mode (if inferencing)
+    model.eval()
+    print('Model loaded and set to evaluation mode.')
+    criterion_eval = nn.CrossEntropyLoss(ignore_index=pad_index, reduction='sum')
+    final_ppl,  _ = eval_loop(test_loader, criterion_eval, model)
+    print('model tested', model_path)
+    return final_ppl
+def grid_search_hyperparameters(param):
+    """
+    Perform a grid search over learning rate, embedding size and hidden size.
+    Assumes that param['lr'], param['emb_size'] and param['hidden_size'] are lists of values.
+    """
     results = []
     i = 0
     for lr in param['lr']:
-        for hid_size in param['hid_size']:
+        for hid_size in param['hidden_size']:
             for emb_size in param['emb_size']:
-                result = (param, f'exp{i}_RNN_embsize{emb_size}_hidsize{hid_size}_lr{lr}')
+                new_param = param.copy()
+                new_param['lr'] = lr
+                new_param['hidden_size'] = hid_size
+                new_param['emb_size'] = emb_size
+                result = training(new_param, f'exp{i}_RNN_embsize{emb_size}_hidsize{hid_size}_lr{lr}_{param["optimizer"]}.pt')
                 results.append(result)
                 print(result)
                 i += 1
