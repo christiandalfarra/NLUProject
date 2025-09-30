@@ -44,7 +44,7 @@ if __name__ == "__main__":
     grid_search_hyperparameters(param) """
 
     if param['mode'] == 'train':
-        training(param, experiment=f"exp400_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}")
+        training(param, experiment=f"exp700_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}")
     elif param['mode'] == 'inference':
         test_ppl = testing(param, model_path=f'bin/exp_{param["model_arch"]}_lr{param["lr"]}_{param["optimizer"]}.pt')
         print('Test ppl: ', test_ppl)

@@ -67,6 +67,7 @@ def init_weights(mat):
                     m.bias.data.fill_(0.01)
 
 def plot_loss(epochs, loss_train, loss_validation, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     fig, ax = plt.subplots()
     ax.plot(epochs, loss_train, label='Training Loss')
     ax.plot(epochs, loss_validation, label='Validation Loss')
@@ -79,6 +80,7 @@ def plot_loss(epochs, loss_train, loss_validation, path):
     fig.savefig(path)
 
 def plot_perplexity(epochs, perplexity, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     fig, ax = plt.subplots()
     ax.plot(epochs, perplexity, label='Validation PPL')
     ax.set_title('Validation PPL')
