@@ -187,6 +187,8 @@ def training(param, experiment):
                 if patience <= 0:
                     print("Early stopping triggered")
                     break
+        if best_model is None:
+            best_model = model
         best_model.to(DEVICE)
         results_test, report_intent_test, loss_array_test = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)
         slots_f1.append(results_test['total']['f'])
