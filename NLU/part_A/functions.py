@@ -2,6 +2,14 @@
 # Here is where you define the architecture of your model using pytorch
 from conll import evaluate
 from sklearn.metrics import classification_report
+import torch
+import torch.nn as nn
+import matplotlib.pyplot as plt
+from utils import *
+import numpy as np
+import copy
+from tqdm import tqdm
+from model import *
 
 def init_weights(mat):
     for m in mat.modules():
@@ -92,3 +100,102 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     report_intent = classification_report(ref_intents, hyp_intents, 
                                           zero_division=False, output_dict=True)
     return results, report_intent, loss_array
+
+def plot_loss(epochs, loss_train, loss_validation, path):
+    fig, ax = plt.subplots()
+    ax.plot(epochs, loss_train, label='Training Loss')
+    ax.plot(epochs, loss_validation, label='Validation Loss')
+    ax.set_title('Training and Validation Loss')
+    ax.set_xlabel('Epochs')
+    ax.set_ylabel('Loss')
+    ax.legend()
+    ax.grid(True)
+    fig.tight_layout()
+    fig.savefig(path)
+
+def plot_f1_and_accuracy(epochs, f1_list, acc_list, name):
+    fig, ax = plt.subplots()
+    ax.plot(epochs, f1_list, label='Validation F1 score')
+    ax.plot(epochs, acc_list, label='Validation accuracy')
+    ax.set_title('Validation F1 and Accuracy')
+    ax.set_xlabel('Epochs')
+    ax.set_ylabel('Score')
+    ax.legend()
+    ax.grid(True)
+    fig.tight_layout()
+    fig.savefig(name)
+
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+def training(param, experiment):
+    train_loader, dev_loader, test_loader, lang = get_dataloaders()
+    vocab_len = len(lang.word2id)
+    out_slot = len(lang.slot2id)
+    out_intent = len(lang.intent2id)
+
+    epochs = param['n_epochs']
+    runs = param['multiple_runs']
+    patience = param['patience']
+    clip = param['clip']
+
+    slots_f1 = []
+    intents_acc = []
+
+    for run in tqdm(range(0, runs)):
+        print(f"\nRun {run+1}/{runs}")
+        #Create the model
+        if param['model_arch'] == 'LSTM':
+            model = ModelIAS(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, pad_index = PAD_TOKEN).to(DEVICE)
+        elif param['model_arch'] == 'LSTM_BIDIRECTIONAL':
+            model = ModelIAS_BiLSTM(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, pad_index = PAD_TOKEN).to(DEVICE)
+        elif param['model_arch'] == 'LSTM_DROPOUT':
+            model = ModelIAS_Dropout(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, param['dropout_prob'], pad_index = PAD_TOKEN).to(DEVICE)
+        else:
+            raise ValueError("Model not recognized. Available models: LSTM, LSTM_BIDIRECTIONAL, LSTM_DROPOUT")
+    
+        model.apply(init_weights)
+        if param['optimizer'] == 'SGD':
+            optimizer = torch.optim.SGD(model.parameters(), lr=param['lr'])
+        elif param['optimizer'] == 'AdamW':
+            optimizer = torch.optim.AdamW(model.parameters(), lr=param['lr'])
+        else:
+            raise ValueError("Optimizer not recognized. Available optimizers: SGD, AdamW")
+        
+        criterion_slots = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN)
+        criterion_intents = nn.CrossEntropyLoss()
+
+        losses_train = []
+        losses_dev = []
+        sampled_epochs = []
+        best_f1 = 0
+        best_model = None
+
+        for epoch in tqdm(range(0, epochs)):
+            loss_train = train_loop(train_loader, optimizer, criterion_slots, criterion_intents, model, clip)
+            if epoch % 5 == 0:
+                sampled_epochs.append(epoch)
+                losses_train.append(np.asarray(loss_train).mean())
+                results_dev, report_intent_dev, loss_array_dev = eval_loop(dev_loader, criterion_slots, criterion_intents, model, lang)
+                losses_dev.append(np.asarray(loss_array_dev).mean())
+                f1 = results_dev['total']['f']
+                if f1 > best_f1:
+                    best_f1 = f1
+                    best_model = copy.deepcopy(model)
+                    patience = param['patience'] # reset patience if we have a new best model
+                else:
+                    patience -= 1
+                if patience <= 0:
+                    print("Early stopping triggered")
+                    break
+        best_model.to(DEVICE)
+        results_test, report_intent_test, loss_array_test = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)
+        slots_f1.append(results_test['total']['f'])
+        intents_acc.append(report_intent_test['accuracy'])
+    
+    slots_f1 = np.asarray(slots_f1)
+    intents_acc = np.asarray(intents_acc)
+    # Stat print
+    print('Slot F1', round(slots_f1.mean(),3), '+-', round(slots_f1.std(),3))
+    print('Intent Acc', round(intents_acc.mean(), 3), '+-', round(intents_acc.std(), 3))
+    torch.save(best_model.state_dict(), f'bin/{experiment}.pt')
+                

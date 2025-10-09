@@ -67,24 +67,24 @@ def init_weights(mat):
                 if m.bias != None:
                     m.bias.data.fill_(0.01)
 
-def training(param, experiment):
+def training_SGD(param, experiment):
     train_loader, dev_loader, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
 
-    if param['model'] == 'WeightTiedLSTM':
-        model = WeightTiedLSTM(param['vocab_size'], param['embed_size'], param['hidden_size'], param['num_layers']).to(DEVICE)
-    elif param['model'] == 'VariationalDropoutLSTM_emb':
-        model = VariationalDropoutLSTM_emb(param['vocab_size'], param['embed_size'], param['hidden_size'], param['num_layers'], param['dropout_p']).to(DEVICE)
-    elif param['model'] == 'VariationalDropoutLSTM_last':
-        model = VariationalDropoutLSTM_last(param['vocab_size'], param['embed_size'], param['hidden_size'], param['num_layers'], param['dropout_p']).to(DEVICE)
-    elif param['model'] == 'VariationalDropoutLSTM_emb_last':
-        model = VariationalDropoutLSTM_emblast(param['vocab_size'], param['embed_size'], param['hidden_size'], param['num_layers'], param['dropout_p']).to(DEVICE)
+    if param['model_arch'] == 'WeightTiedLSTM':
+        model = WeightTiedLSTM(vocab_len, param['emb_size'], param['hidden_size']).to(DEVICE)
+    elif param['model_arch'] == 'VariationalDropoutLSTM_emb':
+        model = VariationalDropoutLSTM_emb(vocab_len, param['emb_size'], param['hidden_size'], param['emb_dropout']).to(DEVICE)
+    elif param['model_arch'] == 'VariationalDropoutLSTM_last':
+        model = VariationalDropoutLSTM_last(vocab_len, param['emb_size'], param['hidden_size'], param['out_dropout']).to(DEVICE)
+    elif param['model_arch'] == 'VariationalDropoutLSTM_emb_last':
+        model = VariationalDropoutLSTM_emb_last(vocab_len, param['emb_size'], param['hidden_size'], param['emb_dropout'], param['out_dropout']).to(DEVICE)
     else:
         raise ValueError("Model not recognized. Available models: WeightTiedLSTM, VariationalDropoutLSTM_emb, VariationalDropoutLSTM_last")
     
     model.apply(init_weights)
     # in the case we want to use the AvSGD we have to initialize the optimizer as a classical SGD
-    optimizer = optim.SGD(model.parameters(), lr = param["lr"]) if param['optimizer'] == 'AvSGD' else optim.AdamW(model.parameters(), lr=param['lr'])
+    optimizer = optim.SGD(model.parameters(), lr = param["lr"]) if param['optimizer'] == 'NTAvSGD' else optim.SGD(model.parameters(), lr=param['lr'])
     criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
 
@@ -95,5 +95,33 @@ def training(param, experiment):
     best_model = None
     pbar = tqdm(range(1,param['n_epochs']))
 
-    optimizer = NTASGD(model_params, lr=param['lr'], trigger_patience=5)
-    #completare con la parte relatica al AvSGD
+    for epoch in pbar:
+        loss = train_loop(train_loader, optimizer, criterion_train, model, param['clip'])    
+        if epoch % 1 == 0:
+            sampled_epochs.append(epoch)
+            losses_train.append(np.asarray(loss).mean())
+            ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
+            losses_dev.append(np.asarray(loss_dev).mean())
+            perplexity.append(ppl_dev)
+            pbar.set_description("PPL: %f" % ppl_dev)
+            if  ppl_dev < best_ppl:
+                best_ppl = ppl_dev
+                best_model = copy.deepcopy(model).to(DEVICE)
+                patience = 3
+            else:
+                patience -= 1
+                
+            if patience <= 0:
+                break
+
+    best_model.to(DEVICE)
+    final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
+    print('Test ppl: ', final_ppl)
+    #save weights
+    path = f'bin/{experiment}.pt'
+    torch.save(model.state_dict(), path)
+    #plot the curves for the trainng models
+    plot_loss(sampled_epochs, losses_train, losses_dev, f'plots/{experiment}_loss.png')
+    plot_perplexity(sampled_epochs, perplexity, f'plots/{experiment}_ppl.png')
+
+    return final_ppl

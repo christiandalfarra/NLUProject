@@ -3,7 +3,7 @@ import torch.nn as nn
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class WeightTiedLSTM(nn.Module):
-    def __init__(self, vocab_size, embed_size, hidden_size, num_layers):
+    def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1):
         super().__init__()
         self.embed = nn.Embedding(vocab_size, embed_size)
         self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
@@ -34,7 +34,7 @@ class VariationalDropout(nn.Module):
         return x * mask
 
 class VariationalDropoutLSTM_emb(nn.Module):
-    def __init__(self, vocab_size, embed_size, hidden_size, num_layers, dropout_p=0.5):
+    def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1, dropout_p=0.5):
         super().__init__()
         self.embed = nn.Embedding(vocab_size, embed_size)
         self.dropoutemb = VariationalDropout(dropout_p)
@@ -49,7 +49,7 @@ class VariationalDropoutLSTM_emb(nn.Module):
         return x, hidden
     
 class VariationalDropoutLSTM_last(nn.Module):
-    def __init__(self, vocab_size, embed_size, hidden_size, num_layers, dropout_p=0.5):
+    def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1, dropout_p=0.5):
         super().__init__()
         self.embed = nn.Embedding(vocab_size, embed_size)
         self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
@@ -64,7 +64,7 @@ class VariationalDropoutLSTM_last(nn.Module):
         return x, hidden
 
 class VariationalDropoutLSTM_emblast(nn.Module):
-    def __init__(self, vocab_size, embed_size, hidden_size, num_layers, dropout_p=0.5):
+    def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1, dropout_p=0.5):
         super().__init__()
         self.embed = nn.Embedding(vocab_size, embed_size)
         self.dropoutemb = VariationalDropout(dropout_p)

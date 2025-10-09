@@ -17,7 +17,7 @@ from functions import *
         'AdamW' : the AdamW optimizer
     """
 param ={
-    'mode': 'train',
+    'mode': 'inference',
 
     'model_arch' : 'LSTM_DOEMB_LAST_LAYER',
     'emb_size': 350,
@@ -41,7 +41,8 @@ if __name__ == "__main__":
     To perform a grid search on learning rate, emb size and hidden size uncomment the line below
     and make sure that in the param dictionary above lr, emb_size and hidden_size are lists of values.
     # grid search on learning rate emb size and hidden size
-    grid_search_hyperparameters(param) """
+    """
+    #grid_search_hyperparameters(param)
 
     if param['mode'] == 'train':
         training(param, experiment=f"exp700_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}")

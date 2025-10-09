@@ -2,6 +2,9 @@
 # Here is where you define the architecture of your model using pytorch
 from conll import evaluate
 from sklearn.metrics import classification_report
+import torch
+import torch.nn as nn
+import matplotlib.pyplot as plt
 
 def init_weights(mat):
     for m in mat.modules():
@@ -92,3 +95,27 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     report_intent = classification_report(ref_intents, hyp_intents, 
                                           zero_division=False, output_dict=True)
     return results, report_intent, loss_array
+
+    def plot_loss(epochs, loss_train, loss_validation, path):
+    fig, ax = plt.subplots()
+    ax.plot(epochs, loss_train, label='Training Loss')
+    ax.plot(epochs, loss_validation, label='Validation Loss')
+    ax.set_title('Training and Validation Loss')
+    ax.set_xlabel('Epochs')
+    ax.set_ylabel('Loss')
+    ax.legend()
+    ax.grid(True)
+    fig.tight_layout()
+    fig.savefig(path)
+
+def plot_f1_and_accuracy(epochs, f1_list, acc_list, name):
+    fig, ax = plt.subplots()
+    ax.plot(epochs, f1_list, label='Validation F1 score')
+    ax.plot(epochs, acc_list, label='Validation accuracy')
+    ax.set_title('Validation F1 and Accuracy')
+    ax.set_xlabel('Epochs')
+    ax.set_ylabel('Score')
+    ax.legend()
+    ax.grid(True)
+    fig.tight_layout()
+    fig.savefig(name)
