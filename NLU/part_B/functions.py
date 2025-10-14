@@ -96,7 +96,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
                                           zero_division=False, output_dict=True)
     return results, report_intent, loss_array
 
-    def plot_loss(epochs, loss_train, loss_validation, path):
+def plot_loss(epochs, loss_train, loss_validation, path):
     fig, ax = plt.subplots()
     ax.plot(epochs, loss_train, label='Training Loss')
     ax.plot(epochs, loss_validation, label='Validation Loss')

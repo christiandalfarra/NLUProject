@@ -101,30 +101,6 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
                                           zero_division=False, output_dict=True)
     return results, report_intent, loss_array
 
-def plot_loss(epochs, loss_train, loss_validation, path):
-    fig, ax = plt.subplots()
-    ax.plot(epochs, loss_train, label='Training Loss')
-    ax.plot(epochs, loss_validation, label='Validation Loss')
-    ax.set_title('Training and Validation Loss')
-    ax.set_xlabel('Epochs')
-    ax.set_ylabel('Loss')
-    ax.legend()
-    ax.grid(True)
-    fig.tight_layout()
-    fig.savefig(path)
-
-def plot_f1_and_accuracy(epochs, f1_list, acc_list, name):
-    fig, ax = plt.subplots()
-    ax.plot(epochs, f1_list, label='Validation F1 score')
-    ax.plot(epochs, acc_list, label='Validation accuracy')
-    ax.set_title('Validation F1 and Accuracy')
-    ax.set_xlabel('Epochs')
-    ax.set_ylabel('Score')
-    ax.legend()
-    ax.grid(True)
-    fig.tight_layout()
-    fig.savefig(name)
-
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def training(param, experiment):
@@ -142,7 +118,7 @@ def training(param, experiment):
     intents_acc = []
 
     for run in tqdm(range(0, runs)):
-        print(f"\nRun {run+1}/{runs}")
+        print(f"\nRun {run+1}/{runs}\n")
         #Create the model
         if param['model_arch'] == 'LSTM':
             model = ModelIAS(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, pad_index = PAD_TOKEN).to(DEVICE)
@@ -185,7 +161,7 @@ def training(param, experiment):
                 else:
                     patience -= 1
                 if patience <= 0:
-                    print("Early stopping triggered")
+                    print("Early stopping triggered\n")
                     break
         if best_model is None:
             best_model = model
