@@ -1,7 +1,14 @@
-LSTM normale 5 runs da 200 epoche, AdamW lr = 0.0001
+LSTM normale 5 runs da 200 epoche, AdamW lr = 0.0001 emb size 200 h size 300
 Slot F1 0.774 +- 0.286
 Intent Acc 0.89 +- 0.09
 
-riprovato con adam
+riprovato con AdamW
 Slot F1 0.549 +- 0.449
 Intent Acc 0.854 +- 0.104
+
+LSTM normale 5 runs da 200 epoche, Adam lr = 0.0001 emb size 250 h size 300
+
+Slot F1 0.923 +- 0.003
+Intent Acc 0.938 +- 0.004
+
+Bidirectional 5 runs 200 epcohe Adam lr 0.0001 embsize 250 hsize 300

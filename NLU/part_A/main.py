@@ -12,20 +12,23 @@ from utils import *
         'LSTM' : Simple LSTM
         'LSTM_BIDIRECTIONAL' : Bidirectional LSTM
         'LSTM_DROPOUT' : LSTM Bidirectional with dropout embedding layer and the last linear layer
+
     'emb_size': size of the embedding layer
     'hidden_size': size of the hidden layer
     'dropout_prob': dropout probability (only for the model with dropout)
     'lr' : learning rate
     'clip': gradient clipping value
-    'n_epochs': number of epochs
     'patience': number of epochs to wait before early stopping
+
+    'n_epochs': number of epochs
     'multiple_runs': number of runs with different weight initialization
+
     'optimizer': optimizer to use. Available optimizers: 'SGD' or 'AdamW' or 'Adam'
     """
 param ={
     'mode': 'train',
 
-    'model_arch' : 'LSTM',
+    'model_arch' : 'LSTM_BIDIRECTIONAL',
     'emb_size': 250,
     'hidden_size': 300,
     'dropout_prob': 0.5,
