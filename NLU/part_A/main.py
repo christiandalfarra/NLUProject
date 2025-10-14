@@ -27,7 +27,7 @@ param ={
     'patience': 3,
     'multiple_runs': 5,
 
-    'optimizer': 'AdamW'  # 'SGD' or 'AdamW'
+    'optimizer': 'AdamW'  # 'SGD' or 'AdamW' or 'Adam'
 }
 
 if __name__ == "__main__":

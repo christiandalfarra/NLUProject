@@ -134,9 +134,11 @@ def training(param, experiment):
             optimizer = torch.optim.SGD(model.parameters(), lr=param['lr'])
         elif param['optimizer'] == 'AdamW':
             optimizer = torch.optim.AdamW(model.parameters(), lr=param['lr'])
+        elif param['optimizer'] == 'Adam':
+            optimizer = torch.optim.Adam(model.parameters(), lr=param['lr'])
         else:
-            raise ValueError("Optimizer not recognized. Available optimizers: SGD, AdamW")
-        
+            raise ValueError("Optimizer not recognized. Available optimizers: SGD, AdamW, Adam")
+
         criterion_slots = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN)
         criterion_intents = nn.CrossEntropyLoss()
 
