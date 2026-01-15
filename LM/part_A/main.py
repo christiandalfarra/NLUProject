@@ -16,7 +16,6 @@ from functions import *
         'SGD' : Stochastic Gradient Descent
         'AdamW' : the AdamW optimizer
     """
-param
 param ={
     'mode': 'train',
 
