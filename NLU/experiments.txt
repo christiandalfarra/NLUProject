@@ -12,3 +12,9 @@ Slot F1 0.923 +- 0.003
 Intent Acc 0.938 +- 0.004
 
 Bidirectional 5 runs 200 epcohe Adam lr 0.0001 embsize 250 hsize 300
+
+Slot F1 0.563 +- 0.46
+Intent Acc 0.852 +- 0.111
+
+Slot F1 0.747 +- 0.374
+Intent Acc 0.898 +- 0.085

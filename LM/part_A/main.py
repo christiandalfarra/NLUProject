@@ -16,13 +16,14 @@ from functions import *
         'SGD' : Stochastic Gradient Descent
         'AdamW' : the AdamW optimizer
     """
+param
 param ={
-    'mode': 'inference',
+    'mode': 'train',
 
     'model_arch' : 'LSTM_DOEMB_LAST_LAYER',
     'emb_size': 350,
     'hidden_size': 350,
-    'emb_dropout': 0.5,
+    'emb_dropout': 0.2,
     'out_dropout': 0.2,
 
     'lr' : 0.0001,
@@ -47,5 +48,5 @@ if __name__ == "__main__":
     if param['mode'] == 'train':
         training(param, experiment=f"exp700_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}")
     elif param['mode'] == 'inference':
-        test_ppl = testing(param, model_path=f'bin/exp_{param["model_arch"]}_lr{param["lr"]}_{param["optimizer"]}.pt')
+        test_ppl = testing(param, model_path=f'bin/exp700_{param["model_arch"]}_lr{param["lr"]}_{param["optimizer"]}.pt')
         print('Test ppl: ', test_ppl)

@@ -29,8 +29,8 @@ param ={
     'mode': 'train',
 
     'model_arch' : 'LSTM_BIDIRECTIONAL',
-    'emb_size': 250,
-    'hidden_size': 300,
+    'emb_size': 350,
+    'hidden_size': 350,
     'dropout_prob': 0.5,
 
     'lr' : 0.0001,
@@ -39,7 +39,7 @@ param ={
     'patience': 3,
     'multiple_runs': 5,
 
-    'optimizer': 'Adam'  # 'SGD' or 'AdamW' or 'Adam'
+    'optimizer': 'AdamW'  # 'SGD' or 'AdamW' or 'Adam'
 }
 
 if __name__ == "__main__":
