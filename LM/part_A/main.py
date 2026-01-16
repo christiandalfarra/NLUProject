@@ -17,9 +17,9 @@ from functions import *
         'AdamW' : the AdamW optimizer
     """
 param ={
-    'mode': 'train',
+    'mode': 'evaluate',  # 'train' or 'evaluate'
 
-    'model_arch' : 'LSTM',
+    'model_arch' : 'LSTM_DOEMB_LAYER',
     'emb_size': 350,
     'hidden_size': 350,
     'emb_dropout': 0.2,
@@ -47,5 +47,5 @@ if __name__ == "__main__":
     if param['mode'] == 'train':
         training(param, experiment=f"exp700_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}")
     elif param['mode'] == 'evaluate':
-        test_ppl = testing(param, model_path=f'bin/exp700_{param["model_arch"]}_lr{param["lr"]}_{param["optimizer"]}.pt')
+        test_ppl = testing(param, model_path=f'bin/exp_{param["model_arch"]}_lr{param["lr"]}_{param["optimizer"]}.pt')
         print('Test ppl: ', test_ppl)
