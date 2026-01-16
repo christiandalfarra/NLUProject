@@ -98,7 +98,7 @@ def training(param, experiment):
 
     arch = param['model_arch']
     if arch == 'RNN':
-        model = LM_RNN(
+        model = RNN(
             param['emb_size'],
             param['hidden_size'],
             vocab_len,
@@ -106,7 +106,7 @@ def training(param, experiment):
             ).to(DEVICE)
 
     elif arch == 'LSTM':
-        model = LM_LSTM(
+        model = LSTM(
             param['emb_size'],
             param['hidden_size'],
             vocab_len,
@@ -114,7 +114,7 @@ def training(param, experiment):
             ).to(DEVICE)
 
     elif arch == 'LSTM_DOEMB_LAYER':
-        model = LM_LSTM_DROP_EMB_LAYER(
+        model = LSTM_DROP_EMB_LAYER(
             param['emb_size'],
             param['hidden_size'],
             vocab_len,
@@ -123,7 +123,7 @@ def training(param, experiment):
             ).to(DEVICE)
 
     elif arch == 'LSTM_DOEMB_LAST_LAYER':
-        model = LM_LSTM_DROP_EMB_LAST_LAYER(
+        model = LSTM_DROP_EMB_LAST_LAYER(
             param['emb_size'],
             param['hidden_size'],
             vocab_len,
