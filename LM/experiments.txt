@@ -15,9 +15,9 @@ tutti quelli su questa tabella hanno il modulo RNN
 fourth experiment change the RNN module with LSTM one, test with lr 0.5
 |   LSTM l0.5       | 146.57|
 
-fifth experiment add dropout layer after the embedding one embdo=0.5
+fifth experiment add dropout layer after the embedding one embdo=0.5 lr 0.5
 
-|LSTM l0.5 doemb0.5 | 132.09| best LSTM embdo
+|LSTM l0.5 doemb0.5 | 125.73| best LSTM embdo
 
 sixth experiment add dropout layer before the last linear layer
 |LSTM l0.5 doemb0.5 | 131.21|

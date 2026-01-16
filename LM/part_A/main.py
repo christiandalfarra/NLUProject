@@ -19,7 +19,7 @@ from functions import *
 param ={
     'mode': 'train',  # 'train' or 'evaluate'
 
-    'model_arch' : 'LSTM_DOEMB_LAYER',
+    'model_arch' : 'LSTM_DOEMB_LAST_LAYER',
     'emb_size': 350,
     'hidden_size': 350,
     'emb_dropout': 0.2,
