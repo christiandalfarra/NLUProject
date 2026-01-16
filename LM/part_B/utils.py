@@ -127,6 +127,7 @@ def getLoaders():
     dev_loader = DataLoader(dev_dataset, batch_size=128, collate_fn=partial(collate_fn, pad_token=lang.word2id["<pad>"]))
     test_loader = DataLoader(test_dataset, batch_size=128, collate_fn=partial(collate_fn, pad_token=lang.word2id["<pad>"]))
     return train_loader, dev_loader, test_loader, lang
+
 class NTAvSGD:
     def __init__(self, params, lr, n=3, L=3):
         self.params = list(params)
@@ -184,5 +185,3 @@ class NTAvSGD:
             avg_weights.append(avg)
             
         return avg_weights
-    
-getLoaders()

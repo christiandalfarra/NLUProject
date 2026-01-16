@@ -185,14 +185,14 @@ def testing(param, model_path):
     vocab_len = len(lang.word2id)
     pad_index = lang.word2id["<pad>"]
     if param['model_arch'] == 'RNN':
-        model = LM_RNN(
+        model = RNN(
             param['emb_size'],
             param['hidden_size'],
             vocab_len,
             pad_index
             ).to(DEVICE)
     elif param['model_arch'] in ['LSTM', 'LSTM_DOEMB_LAYER', 'LSTM_DOEMB_LAST_LAYER']:
-        model = LM_LSTM(
+        model = LSTM(
             param['emb_size'],
             param['hidden_size'],
             vocab_len,
@@ -212,6 +212,7 @@ def testing(param, model_path):
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, model)
     print('model tested', model_path)
     return final_ppl
+
 def grid_search_hyperparameters(param):
     """
     Perform a grid search over learning rate, embedding size and hidden size.
@@ -231,4 +232,3 @@ def grid_search_hyperparameters(param):
                 print(result)
                 i += 1
     return results
-

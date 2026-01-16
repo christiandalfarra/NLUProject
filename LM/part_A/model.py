@@ -3,7 +3,7 @@ import torch.nn as nn
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-class LM_RNN(nn.Module):
+class RNN(nn.Module):
     def __init__(self, emb_size, hidden_size, output_size, pad_index=0, out_dropout=0.1,
                  emb_dropout=0.1, n_layers=1):
         super(LM_RNN, self).__init__()
@@ -18,7 +18,7 @@ class LM_RNN(nn.Module):
         output = self.output(rnn_out).permute(0,2,1)
         return output
 
-class LM_LSTM(nn.Module):
+class LSTM(nn.Module):
     def __init__(self, emb_size, hidden_size, output_size, pad_index=0, out_dropout=0.1,
                  emb_dropout=0.1, n_layers=1):
         super(LM_LSTM, self).__init__()
@@ -33,7 +33,7 @@ class LM_LSTM(nn.Module):
         output = self.output(lstm_out).permute(0,2,1)
         return output
     
-class LM_LSTM_DROP_EMB_LAYER(nn.Module):
+class LSTM_DROP_EMB_LAYER(nn.Module):
     def __init__(self, emb_size, hidden_size, output_size, emb_dropout=0.5, pad_index=0, n_layers=1):
         super(LM_LSTM_DROP_EMB_LAYER,self).__init__()
         self.embedding = nn.Embedding(output_size, emb_size, padding_idx=pad_index)
@@ -49,7 +49,7 @@ class LM_LSTM_DROP_EMB_LAYER(nn.Module):
         output = self.output(lstm_out).permute(0, 2, 1)
         return output
     
-class LM_LSTM_DROP_EMB_LAST_LAYER(nn.Module):
+class LSTM_DROP_EMB_LAST_LAYER(nn.Module):
     def __init__(self, emb_size, hidden_size, output_size, emb_dropout=0.5, out_dropout=0.2, pad_index=0, n_layers=1):
         super(LM_LSTM_DROP_EMB_LAST_LAYER, self).__init__()  # Fixed class name here
         self.embedding = nn.Embedding(output_size, emb_size, padding_idx=pad_index)

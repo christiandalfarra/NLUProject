@@ -2,9 +2,25 @@ import torch
 import torch.nn as nn
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+class LSTM(nn.Module):
+    def __init__(self, emb_size, hidden_size, output_size, pad_index=0, out_dropout=0.1,
+                 emb_dropout=0.1, n_layers=1):
+        super(LSTM, self).__init__()
+        self.embedding = nn.Embedding(output_size, emb_size, padding_idx=pad_index)
+        self.lstm = nn.LSTM(emb_size, hidden_size, n_layers, bidirectional=False, batch_first=True)  
+        self.pad_token = pad_index 
+        self.output = nn.Linear(hidden_size, output_size)
+        
+    def forward(self, input_sequence):
+        emb = self.embedding(input_sequence)
+        lstm_out, _  = self.lstm(emb)
+        output = self.output(lstm_out).permute(0,2,1)
+        return output
+
 class WeightTiedLSTM(nn.Module):
     def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1):
-        super().__init__()
+        super(WeightTiedLSTM, self).__init__()
         self.embed = nn.Embedding(vocab_size, embed_size)
         self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
         self.fc = nn.Linear(hidden_size, vocab_size)
@@ -20,7 +36,7 @@ class WeightTiedLSTM(nn.Module):
 
 class VariationalDropout(nn.Module):
     def __init__(self, p=0.5):
-        super().__init__()
+        super(VariationalDropout, self).__init__()
         self.p = p
         
     def forward(self, x):
@@ -30,52 +46,9 @@ class VariationalDropout(nn.Module):
         # Sample mask once per forward/backward pass
         mask = x.new_empty(x.size(0), 1, x.size(2), requires_grad=False).bernoulli_(1 - self.p)
         mask = mask.div_(1 - self.p)
+
+        #expand to the full input size
         mask = mask.expand_as(x)
         return x * mask
 
-class VariationalDropoutLSTM_emb(nn.Module):
-    def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1, dropout_p=0.5):
-        super().__init__()
-        self.embed = nn.Embedding(vocab_size, embed_size)
-        self.dropoutemb = VariationalDropout(dropout_p)
-        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, vocab_size)
-        
-    def forward(self, x, hidden=None):
-        x = self.embed(x)
-        x = self.dropoutemb(x)  # Same mask applied to all timesteps
-        x, hidden = self.lstm(x, hidden)
-        x = self.fc(x)
-        return x, hidden
-    
-class VariationalDropoutLSTM_last(nn.Module):
-    def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1, dropout_p=0.5):
-        super().__init__()
-        self.embed = nn.Embedding(vocab_size, embed_size)
-        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
-        self.dropoutlast = VariationalDropout(dropout_p)
-        self.fc = nn.Linear(hidden_size, vocab_size)
-        
-    def forward(self, x, hidden=None):
-        x = self.embed(x)
-        x, hidden = self.lstm(x, hidden)
-        x = self.dropoutlast(x)
-        x = self.fc(x)
-        return x, hidden
-
-class VariationalDropoutLSTM_emblast(nn.Module):
-    def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1, dropout_p=0.5):
-        super().__init__()
-        self.embed = nn.Embedding(vocab_size, embed_size)
-        self.dropoutemb = VariationalDropout(dropout_p)
-        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
-        self.dropoutlast = VariationalDropout(dropout_p)
-        self.fc = nn.Linear(hidden_size, vocab_size)
-        
-    def forward(self, x, hidden=None):
-        x = self.embed(x)
-        x = self.dropoutemb(x)
-        x, hidden = self.lstm(x, hidden)
-        x = self.dropoutlast(x)
-        x = self.fc(x)
-        return x, hidden
+class 
