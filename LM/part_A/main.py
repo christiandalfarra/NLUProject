@@ -17,7 +17,7 @@ from functions import *
         'AdamW' : the AdamW optimizer
     """
 param ={
-    'mode': 'evaluate',  # 'train' or 'evaluate'
+    'mode': 'train',  # 'train' or 'evaluate'
 
     'model_arch' : 'LSTM_DOEMB_LAYER',
     'emb_size': 350,

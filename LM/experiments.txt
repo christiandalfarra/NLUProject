@@ -12,8 +12,8 @@ tutti quelli su questa tabella hanno il modulo RNN
 |-------------------|-------|
 | e350 h350 lr0.5   | 167.70|
 
-fourth experiment change the RNN module with LSTM one, test with three lr [0.1, 0.5]
-|   LSTM l0.5       | 165.69|
+fourth experiment change the RNN module with LSTM one, test with lr 0.5
+|   LSTM l0.5       | 146.57|
 
 fifth experiment add dropout layer after the embedding one embdo=0.5
 
