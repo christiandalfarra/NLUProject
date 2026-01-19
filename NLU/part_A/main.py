@@ -28,7 +28,7 @@ from utils import *
 param ={
     'mode': 'train',
 
-    'model_arch' : 'LSTM_BIDIRECTIONAL',
+    'model_arch' : 'LSTM_DROPOUT',
     'emb_size': 300,
     'hidden_size': 300,
     'dropout_prob': 0.5,
