@@ -30,7 +30,7 @@ param ={
 
     'model_arch' : 'LSTM',
     'emb_size': 300,
-    'hidden_size': 200,
+    'hidden_size': 300,
     'dropout_prob': 0.5,
 
     'lr' : 0.0001,
@@ -45,7 +45,7 @@ param ={
 if __name__ == "__main__":
     if param['mode'] == 'train':
         print("Training Mode")
-        training(param, "second_experiment")
+        training(param, "third300300_experiment")
     elif param['mode'] == 'inference':
         print("Inference Mode")
 
