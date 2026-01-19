@@ -28,9 +28,9 @@ from utils import *
 param ={
     'mode': 'train',
 
-    'model_arch' : 'LSTM_BIDIRECTIONAL',
-    'emb_size': 350,
-    'hidden_size': 350,
+    'model_arch' : 'LSTM',
+    'emb_size': 300,
+    'hidden_size': 200,
     'dropout_prob': 0.5,
 
     'lr' : 0.0001,
@@ -39,7 +39,7 @@ param ={
     'patience': 3,
     'multiple_runs': 5,
 
-    'optimizer': 'AdamW'  # 'SGD' or 'AdamW' or 'Adam'
+    'optimizer': 'Adam'  # 'SGD' or 'AdamW' or 'Adam'
 }
 
 if __name__ == "__main__":

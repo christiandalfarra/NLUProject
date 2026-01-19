@@ -130,6 +130,7 @@ def training(param, experiment):
             raise ValueError("Model not recognized. Available models: LSTM, LSTM_BIDIRECTIONAL, LSTM_DROPOUT")
     
         model.apply(init_weights)
+        # Optimizer
         if param['optimizer'] == 'SGD':
             optimizer = torch.optim.SGD(model.parameters(), lr=param['lr'])
         elif param['optimizer'] == 'AdamW':

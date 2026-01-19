@@ -5,49 +5,20 @@ import torch
 import torch.utils.data as data
 from collections import Counter
 from sklearn.model_selection import train_test_split
+import os
 
-from datasets import load_dataset
 PAD_TOKEN = 0
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-
 def load_data(path):
-    """
-    input: path/to/data
-    output: list of dicts (dataset)
-    Supports:
-      - JSON array (e.g. [ {...}, {...} ])
-      - Single JSON object (wrapped as a list)
-      - Newline-delimited JSON (ndjson): one JSON object per line
-    """
-    with open(path, 'r', encoding='utf-8') as f:
-        text = f.read().strip()
-
-    if not text:
-        return []
-
-    # ndjson: multiple JSON objects one per line (and not a JSON array)
-    if '\n' in text and not text.lstrip().startswith('['):
-        lines = [ln for ln in text.splitlines() if ln.strip()]
-        try:
-            return [json.loads(ln) for ln in lines]
-        except json.JSONDecodeError:
-            # fall through to try loading whole text as JSON
-            pass
-
-    data = json.loads(text)
-
-    # Normalize to a list of dicts
-    if isinstance(data, dict):
-        # single example -> wrap
-        if 'utterance' in data or 'intent' in data or 'slots' in data:
-            return [data]
-        # dict of objects -> return values if appropriate
-        if all(isinstance(v, dict) for v in data.values()):
-            return list(data.values())
-        return [data]
-
-    return data
+    '''
+        input: path/to/data
+        output: json 
+    '''
+    dataset = []
+    with open(path) as f:
+        dataset = json.loads(f.read())
+    return dataset
 
 
 class Lang:
@@ -87,7 +58,7 @@ class IntentsAndSlots(data.Dataset):
         self.unk = unk
 
         for x in dataset:
-            self.utterances.append(x["text"])
+            self.utterances.append(x["utterance"])
             self.slots.append(x["slots"])
             self.intents.append(x["intent"])
 
@@ -167,10 +138,9 @@ def collate_fn(data):
 
 
 def get_dataloaders():
-    # Load a temporary train set (it will be separated in dev) and the actual test set
-    dataset = load_dataset("tuetschek/atis")
-    tmp_train_raw = list(dataset['train'])
-    test_raw = list(dataset['test'])
+    
+    tmp_train_raw = load_data(os.path.join("..", "dataset", "train.json"))
+    test_raw = load_data(os.path.join("..", "dataset", "test.json"))
 
     portion = 0.10
     intents = [x['intent'] for x in tmp_train_raw]  # We stratify on intents
@@ -187,24 +157,22 @@ def get_dataloaders():
         else:
             mini_train.append(tmp_train_raw[id_y])
     # Random Stratify
-    X_train, X_dev, y_train, y_dev = train_test_split(
+    X_train, X_dev, _, _ = train_test_split(
         inputs, labels, test_size=portion, random_state=42, shuffle=True, stratify=labels
     )
     X_train.extend(mini_train)
     train_raw = X_train
     dev_raw = X_dev
 
-    y_test = [x['intent'] for x in test_raw]
+    words = sum([x['utterance'].split() for x in train_raw], []) # No set() since we want to compute the cutoff
+    corpus = train_raw + dev_raw + test_raw
 
-    words = sum([x['text'].split() for x in train_raw], []) # No set() since we want to compute 
-                                                            # the cutoff
-    corpus = train_raw + dev_raw + test_raw # We do not wat unk labels, 
-                                            # however this depends on the research purpose
     slots = set(sum([line['slots'].split() for line in corpus],[]))
     intents = set([line['intent'] for line in corpus])
 
     lang = Lang(words, intents, slots, cutoff=0)
 
+    # Create our datasets
     train_dataset = IntentsAndSlots(train_raw, lang)
     dev_dataset = IntentsAndSlots(dev_raw, lang)
     test_dataset = IntentsAndSlots(test_raw, lang)

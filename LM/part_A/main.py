@@ -22,7 +22,7 @@ param ={
     'model_arch' : 'LSTM_DOEMB_LAYER',
     'emb_size': 350,
     'hidden_size': 350,
-    'emb_dropout': 0.5,
+    'emb_dropout': 0.2,
     'out_dropout': 0.2,
 
     'lr' : 0.5,
