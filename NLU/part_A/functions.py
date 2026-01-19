@@ -123,9 +123,9 @@ def training(param, experiment):
         if param['model_arch'] == 'LSTM':
             model = ModelIAS(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, pad_index = PAD_TOKEN).to(DEVICE)
         elif param['model_arch'] == 'LSTM_BIDIRECTIONAL':
-            model = ModelIAS_BiLSTM(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, pad_index = PAD_TOKEN).to(DEVICE)
+            model = ModelIAS(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, pad_index = PAD_TOKEN, bidirectional=True).to(DEVICE)
         elif param['model_arch'] == 'LSTM_DROPOUT':
-            model = ModelIAS_Dropout(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, param['dropout_prob'], pad_index = PAD_TOKEN).to(DEVICE)
+            model = ModelIAS(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, pad_index = PAD_TOKEN, bidirectional=True, dropout_prob=param['dropout_prob']).to(DEVICE)
         else:
             raise ValueError("Model not recognized. Available models: LSTM, LSTM_BIDIRECTIONAL, LSTM_DROPOUT")
     
