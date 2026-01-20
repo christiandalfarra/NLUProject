@@ -5,40 +5,22 @@ from sklearn.metrics import classification_report
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
-
-def init_weights(mat):
-    for m in mat.modules():
-        if type(m) in [nn.GRU, nn.LSTM, nn.RNN]:
-            for name, param in m.named_parameters():
-                if 'weight_ih' in name:
-                    for idx in range(4):
-                        mul = param.shape[0]//4
-                        torch.nn.init.xavier_uniform_(param[idx*mul:(idx+1)*mul])
-                elif 'weight_hh' in name:
-                    for idx in range(4):
-                        mul = param.shape[0]//4
-                        torch.nn.init.orthogonal_(param[idx*mul:(idx+1)*mul])
-                elif 'bias' in name:
-                    param.data.fill_(0)
-        else:
-            if type(m) in [nn.Linear]:
-                torch.nn.init.uniform_(m.weight, -0.01, 0.01)
-                if m.bias != None:
-                    m.bias.data.fill_(0.01)
+from tqdm import tqdm
+from utils import *
+from model import BertIAS
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def train_loop(data, optimizer, criterion_slots, criterion_intents, model, clip=5):
     model.train()
     loss_array = []
     for sample in data:
         optimizer.zero_grad() # Zeroing the gradient
-        slots, intent = model(sample['utterances'], sample['slots_len'])
+        slots, intent = model(sample['utterances'], sample['attention_mask'])
         loss_intent = criterion_intents(intent, sample['intents'])
         loss_slot = criterion_slots(slots, sample['y_slots'])
-        loss = loss_intent + loss_slot # In joint training we sum the losses. 
-                                       # Is there another way to do that?
+        loss = loss_intent + loss_slot 
         loss_array.append(loss.item())
-        loss.backward() # Compute the gradient, deleting the computational graph
-        # clip the gradient to avoid exploding gradients
+        loss.backward() # Backpropagation
         torch.nn.utils.clip_grad_norm_(model.parameters(), clip)  
         optimizer.step() # Update the weights
     return loss_array
@@ -52,10 +34,12 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     
     ref_slots = []
     hyp_slots = []
-    #softmax = nn.Softmax(dim=1) # Use Softmax if you need the actual probability
+
+    tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+
     with torch.no_grad(): # It used to avoid the creation of computational graph
         for sample in data:
-            slots, intents = model(sample['utterances'], sample['slots_len'])
+            slots, intents = model(sample['utterances'], sample['attention_mask'])
             loss_intent = criterion_intents(intents, sample['intents'])
             loss_slot = criterion_slots(slots, sample['y_slots'])
             loss = loss_intent + loss_slot 
@@ -72,7 +56,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
             output_slots = torch.argmax(slots, dim=1)
             for id_seq, seq in enumerate(output_slots):
                 length = sample['slots_len'].tolist()[id_seq]
-                utt_ids = sample['utterance'][id_seq][:length].tolist()
+                utt_ids = sample['utterances'][id_seq][:length].tolist()
                 gt_ids = sample['y_slots'][id_seq].tolist()
                 gt_slots = [lang.id2slot[elem] for elem in gt_ids[:length]]
                 utterance = [lang.id2word[elem] for elem in utt_ids]
@@ -95,6 +79,65 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     report_intent = classification_report(ref_intents, hyp_intents, 
                                           zero_division=False, output_dict=True)
     return results, report_intent, loss_array
+
+def training(params, experiment):
+    train_loader, dev_loader, test_loader, lang = get_dataloaders()
+
+    vocab_len = len(lang.word2id)
+    out_slot = len(lang.slot2id)
+    out_intent = len(lang.intent2id)
+
+    model = BertIAS(hidden_size=params['hidden_size'], 
+                    slot_out=out_slot, 
+                    intent_out=out_intent, 
+                    dropout_prob=params['dropout_prob']).to(DEVICE)
+    
+    optimizer = torch.optim.AdamW(model.parameters(), lr=params['lr'])
+
+    criterion_slots = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN)
+    criterion_intents = nn.CrossEntropyLoss()
+    
+    epochs = params['n_epochs']
+    patience = params['patience']
+    clip = params['clip']
+
+    slots_f1 = []
+    intents_acc = []
+
+    losses_train = []
+    losses_dev = []
+    sampled_epochs = []
+    best_f1 = 0
+    best_model = None
+
+    for epoch in tqdm(range(0, epochs)):
+        loss_train = train_loop(train_loader, optimizer, criterion_slots, criterion_intents, model, clip=clip)
+        if epoch % 5 == 0:
+            sampled_epochs.append(epoch)
+            losses_train.append(np.asarray(loss_train).mean())
+            results_dev, report_intent_dev, loss_array_dev = eval_loop(dev_loader, criterion_slots, criterion_intents, model, lang)
+            losses_dev.append(np.asarray(loss_array_dev).mean())
+
+            f1 = results_dev['total']['f']
+            if f1 > best_f1:
+                best_f1 = f1
+                best_model = copy.deepcopy(model)
+                patience = param['patience'] # reset patience if we have a new best model
+            else:
+                patience -= 1
+            if patience <= 0:
+                print("Early stopping triggered\n")
+                break
+            slots_f1.append(f1)
+            intents_acc.append(report_intent_dev['accuracy'])
+    best_model.to(DEVICE)
+    
+    # Evaluate on the test set
+    results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)
+    print('Slot F1', results_test['total']['f'])
+    print('Intent Acc', report_intent_test['accuracy'])
+    torch.save(best_model.state_dict(), f'bin/{experiment}.pt')
+
 
 def plot_loss(epochs, loss_train, loss_validation, path):
     fig, ax = plt.subplots()

@@ -1,39 +1,33 @@
-import torch
 import torch.nn as nn
-from transformers.models.bert.modeling_bert import BertModel
-from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
+from transformers import BertModel
 
 class BertIAS(nn.Module):
-    def __init__(self, bert_model_name, hid_size, out_slot, out_int, dropout=0.1):
+    def __init__(self, hidden_size, slot_out, intent_out, dropout_prob=0.1):
         super(BertIAS, self).__init__()
+
+        #get the pretrained BERT model
+        self.bert = BertModel.from_pretrained('bert-base-uncased')
+
+        self.slot_out = nn.Linear(hidden_size, slot_out)
+        self.intent_out = nn.Linear(hidden_size, intent_out)
+
+        # Dropout layer as regularization
+        self.dropout = nn.Dropout(dropout_prob)
         
-        self.bert = BertModel.from_pretrained(bert_model_name)
-        self.hid_size = hid_size
-        self.out_slot = out_slot
-        self.out_int = out_int
+    def forward(self, input_ids, attention_mask):
+        output = self.bert(input_ids=input_ids, attention_mask=attention_mask)
+        sequence_output = output.last_hidden_state
+        pooled_output = output.pooler_output
 
-        self.slot_out = nn.Linear(hid_size, out_slot)
-        self.intent_out = nn.Linear(hid_size, out_int)
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, input_ids, attention_mask, token_type_ids):
-        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
-
-        # Get the last hidden state
-        utt_encoded = outputs.last_hidden_state
-        # Get the [CLS] token representation for intent classification
-        pooled_output = outputs.pooler_output
-        
-        # Apply dropout
-        drop_utt = self.dropout(utt_encoded)
-        drop_output = self.dropout(pooled_output)
+        # Dropout
+        sequence_output = self.dropout(sequence_output)
+        pooled_output = self.dropout(pooled_output)
 
         # Compute slot logits
-        slots = self.slot_out(drop_utt)
+        slots = self.slot_out(sequence_output)
         # Compute intent logits
-        intent = self.intent_out(drop_output)
+        intent = self.intent_out(pooled_output)
 
-        # Slot size: batch_size, seq_len, classes
-        slots = slots.permute(0, 2, 1)  # We need this for computing the loss
-        
+        slots = slots.permute(0,2,1) 
+
         return slots, intent
