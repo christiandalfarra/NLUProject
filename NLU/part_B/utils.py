@@ -113,8 +113,6 @@ class IntentsAndSlots (data.Dataset):
 
             utt_ids.append(token_ids)
             slot_ids.append(slot_id_seq)
-            print(utt_ids)
-            print(slot_ids)
             
         return utt_ids, slot_ids
         
