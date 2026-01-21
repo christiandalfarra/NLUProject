@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from utils import *
 from model import BertIAS
+import numpy as np
+import copy
+from transformers import AutoTokenizer
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def train_loop(data, optimizer, criterion_slots, criterion_intents, model, clip=5):
@@ -59,7 +62,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
                 utt_ids = sample['utterances'][id_seq][:length].tolist()
                 gt_ids = sample['y_slots'][id_seq].tolist()
                 gt_slots = [lang.id2slot[elem] for elem in gt_ids[:length]]
-                utterance = [lang.id2word[elem] for elem in utt_ids]
+                utterance = tokenizer.convert_ids_to_tokens(utt_ids)
                 to_decode = seq[:length].tolist()
                 ref_slots.append([(utterance[id_el], elem) for id_el, elem in enumerate(gt_slots)])
                 tmp_seq = []
@@ -122,7 +125,7 @@ def training(params, experiment):
             if f1 > best_f1:
                 best_f1 = f1
                 best_model = copy.deepcopy(model)
-                patience = param['patience'] # reset patience if we have a new best model
+                patience = params['patience'] # reset patience if we have a new best model
             else:
                 patience -= 1
             if patience <= 0:

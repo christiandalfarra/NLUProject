@@ -46,6 +46,7 @@ class Lang():
         vocab = {}
         if pad:
             vocab['pad'] = PAD_TOKEN
+        vocab['unk'] = len(vocab)
         for elem in elements:
                 vocab[elem] = len(vocab)
         return vocab
@@ -72,8 +73,8 @@ class IntentsAndSlots (data.Dataset):
         return len(self.utterances)
 
     def __getitem__(self, idx):
-        utt = torch.Tensor(self.utt_ids[idx])
-        slots = torch.Tensor(self.slot_ids[idx])
+        utt = torch.LongTensor(self.utt_ids[idx])
+        slots = torch.LongTensor(self.slot_ids[idx])
         intent = self.intent_ids[idx]
         sample = {'utterance': utt, 'slots': slots, 'intent': intent}
         return sample
@@ -89,19 +90,32 @@ class IntentsAndSlots (data.Dataset):
         slot_ids = []
 
         for utterance, slots in zip(utt_list, slot_list):
-            # Tokenization for BERT
-            tokens = self.tokenizer.tokenize(utterance)
-            ids = self.tokenizer.convert_tokens_to_ids(tokens)
-            utt_ids.append(ids)
-
-            slot_seq = slots.split()
+            word_list = utterance.split()
+            slot_list_split = slots.split()
+            
+            token_ids = []
             slot_id_seq = []
-            for slot in slot_seq:
-                if slot in mapper:
-                    slot_id_seq.append(mapper[slot])
-                else:
-                    slot_id_seq.append(mapper[self.unk])
+
+            for word, slot_label in zip(word_list, slot_list_split):
+                tokensBert = self.tokenizer(word)
+                ids = self.tokenizer.convert_tokens_to_ids(tokensBert)
+                
+                if ids:
+                    token_ids.extend(ids)
+                    if slot_label in mapper:
+                        slot_id = mapper[slot_label]
+                    else:
+                        slot_id = mapper[self.unk]
+                    
+                    slot_id_seq.append(slot_id)
+                    # Pad the rest of the subwords
+                    slot_id_seq.extend([PAD_TOKEN] * (len(ids) - 1))
+
+            utt_ids.append(token_ids)
             slot_ids.append(slot_id_seq)
+            print(utt_ids)
+            print(slot_ids)
+            
         return utt_ids, slot_ids
         
 
