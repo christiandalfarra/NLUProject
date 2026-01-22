@@ -80,9 +80,6 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
 
                 ref_slots.extend(list(zip(tmp_utt, tmp_ref)))
                 hyp_slots.extend(list(zip(tmp_utt, tmp_hyp)))
-
-                print("REF SLOT:", ref_slots)
-                print("HYP SLOT:", hyp_slots)
     try:            
         results = evaluate(ref_slots, hyp_slots)
     except Exception as ex:
