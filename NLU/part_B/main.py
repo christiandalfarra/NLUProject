@@ -38,7 +38,7 @@ param ={
 
     'lr' : 0.0001,
     'clip': 5,
-    'n_epochs': 2,
+    'n_epochs': 20,
     'patience': 3,
     'multiple_runs': 5,
 
