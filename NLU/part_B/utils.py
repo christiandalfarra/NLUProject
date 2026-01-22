@@ -33,7 +33,7 @@ class Lang():
         self.id2intent = {v:k for k, v in self.intent2id.items()}
         
     def w2id(self, elements, cutoff=None, unk=True):
-        vocab = {'pad': PAD_TOKEN}
+        vocab = {}
         if unk:
             vocab['unk'] = len(vocab)
         count = Counter(elements)
@@ -61,10 +61,10 @@ class IntentsAndSlots (data.Dataset):
         self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
         self.unk = unk
         
-        for x in dataset:
-            self.utterances.append(x['utterance'])
-            self.slots.append(x['slots'])
-            self.intents.append(x['intent'])
+        for data in dataset:
+            self.utterances.append(data['utterance'])
+            self.slots.append(data['slots'])
+            self.intents.append(data['intent'])
 
         self.utt_ids, self.slot_ids = self.mapping_seq(self.utterances, self.slots, lang.slot2id)
         self.intent_ids = self.mapping_lab(self.intents, lang.intent2id)
@@ -73,8 +73,8 @@ class IntentsAndSlots (data.Dataset):
         return len(self.utterances)
 
     def __getitem__(self, idx):
-        utt = torch.LongTensor(self.utt_ids[idx])
-        slots = torch.LongTensor(self.slot_ids[idx])
+        utt = torch.Tensor(self.utt_ids[idx])
+        slots = torch.Tensor(self.slot_ids[idx])
         intent = self.intent_ids[idx]
         sample = {'utterance': utt, 'slots': slots, 'intent': intent}
         return sample
@@ -90,6 +90,7 @@ class IntentsAndSlots (data.Dataset):
         slot_ids = []
 
         for utterance, slots in zip(utt_list, slot_list):
+            # classic tokenization for slots and words
             word_list = utterance.split()
             slot_list_split = slots.split()
             
@@ -97,23 +98,16 @@ class IntentsAndSlots (data.Dataset):
             slot_id_seq = []
 
             for word, slot_label in zip(word_list, slot_list_split):
-                tokensBert = self.tokenizer(word)
-                ids = self.tokenizer.convert_tokens_to_ids(tokensBert)
+                # Tokenize each word using BERT tokenizer
+                tokensBert = self.tokenizer(word)['input_ids'][1:-1]  # Exclude [CLS] and [SEP]
+                token_ids.extend(tokensBert)
                 
-                if ids:
-                    token_ids.extend(ids)
-                    if slot_label in mapper:
-                        slot_id = mapper[slot_label]
-                    else:
-                        slot_id = mapper[self.unk]
-                    
-                    slot_id_seq.append(slot_id)
-                    # Pad the rest of the subwords
-                    slot_id_seq.extend([PAD_TOKEN] * (len(ids) - 1))
-
+                # first token get the slot label, other tokens get the pad token
+                slot_id_seq.extend([mapper[slot_label]] + [PAD_TOKEN] * (len(tokensBert) - 1))
+            
             utt_ids.append(token_ids)
             slot_ids.append(slot_id_seq)
-            
+                    
         return utt_ids, slot_ids
         
 

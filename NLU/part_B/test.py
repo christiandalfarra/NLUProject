@@ -4,7 +4,7 @@ from transformers import BertTokenizerFast
 tokenizer = BertTokenizerFast.from_pretrained("bert-base-uncased")
 
 # 2. Your original text and split
-text = "The quick brown fox jumps over the lazy dog verylongword"
+text = "verylongword"
 # We split by space to get the "original split" you asked for
 original_words = text.split(" ")
 

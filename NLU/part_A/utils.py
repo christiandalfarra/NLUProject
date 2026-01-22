@@ -57,10 +57,10 @@ class IntentsAndSlots(data.Dataset):
         self.slots = []
         self.unk = unk
 
-        for x in dataset:
-            self.utterances.append(x["utterance"])
-            self.slots.append(x["slots"])
-            self.intents.append(x["intent"])
+        for data in dataset:
+            self.utterances.append(data["utterance"])
+            self.slots.append(data["slots"])
+            self.intents.append(data["intent"])
 
         self.utt_ids = self.mapping_seq(self.utterances, lang.word2id)
         self.slot_ids = self.mapping_seq(self.slots, lang.slot2id)

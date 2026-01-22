@@ -43,14 +43,14 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     with torch.no_grad(): # It used to avoid the creation of computational graph
         for sample in data:
             slots, intents = model(sample['utterances'], sample['attention_mask'])
+
             loss_intent = criterion_intents(intents, sample['intents'])
             loss_slot = criterion_slots(slots, sample['y_slots'])
             loss = loss_intent + loss_slot 
             loss_array.append(loss.item())
             # Intent inference
             # Get the highest probable class
-            out_intents = [lang.id2intent[x] 
-                           for x in torch.argmax(intents, dim=1).tolist()] 
+            out_intents = [lang.id2intent[x] for x in torch.argmax(intents, dim=1).tolist()] 
             gt_intents = [lang.id2intent[x] for x in sample['intents'].tolist()]
             ref_intents.extend(gt_intents)
             hyp_intents.extend(out_intents)
@@ -58,17 +58,22 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
             # Slot inference 
             output_slots = torch.argmax(slots, dim=1)
             for id_seq, seq in enumerate(output_slots):
-                length = sample['slots_len'].tolist()[id_seq]
-                utt_ids = sample['utterances'][id_seq][:length].tolist()
+                utt_ids = sample['utterance'][id_seq].tolist()
                 gt_ids = sample['y_slots'][id_seq].tolist()
-                gt_slots = [lang.id2slot[elem] for elem in gt_ids[:length]]
-                utterance = tokenizer.convert_ids_to_tokens(utt_ids)
-                to_decode = seq[:length].tolist()
-                ref_slots.append([(utterance[id_el], elem) for id_el, elem in enumerate(gt_slots)])
-                tmp_seq = []
-                for id_el, elem in enumerate(to_decode):
-                    tmp_seq.append((utterance[id_el], lang.id2slot[elem]))
-                hyp_slots.append(tmp_seq)
+
+                # Get the original words ids using the tokenizer
+                tokens = tokenizer.convert_ids_to_tokens(utt_ids)
+
+                # Prepare for evaluation, remove padding
+                tmp_ref = []
+                tmp_hyp = []
+
+                for i, gt_id in enumerate(gt_ids):
+                    if gt_id != PAD_TOKEN:
+                        tmp_ref.append((tokens[i], lang.id2slot[gt_id]))
+                        tmp_hyp.append((tokens[i], lang.id2slot[seq[i].item()]))
+                ref_slots.extend(tmp_ref)
+                hyp_slots.extend(tmp_hyp)
     try:            
         results = evaluate(ref_slots, hyp_slots)
     except Exception as ex:

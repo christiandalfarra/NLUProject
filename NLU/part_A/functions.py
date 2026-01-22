@@ -67,8 +67,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
             loss_array.append(loss.item())
             # Intent inference
             # Get the highest probable class
-            out_intents = [lang.id2intent[x] 
-                           for x in torch.argmax(intents, dim=1).tolist()] 
+            out_intents = [lang.id2intent[x] for x in torch.argmax(intents, dim=1).tolist()] 
             gt_intents = [lang.id2intent[x] for x in sample['intents'].tolist()]
             ref_intents.extend(gt_intents)
             hyp_intents.extend(out_intents)
