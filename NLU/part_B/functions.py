@@ -70,16 +70,19 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
                 # Prepare for evaluation, remove padding
                 tmp_ref = []
                 tmp_hyp = []
+                tmp_utt = []
 
                 for i, gt_id in enumerate(gt_ids):
                     if gt_id != PAD_TOKEN:
                         tmp_ref.append((tokens[i], lang.id2slot[gt_id]))
                         tmp_hyp.append((tokens[i], lang.id2slot[seq[i].item()]))
-                ref_slots.extend(tmp_ref)
-                hyp_slots.extend(tmp_hyp)
+                        tmp_utt.append(tokens[i])
 
-                print("REF SLOT:", tmp_ref)
-                print("HYP SLOT:", tmp_hyp)
+                ref_slots.extend(list(zip(tmp_utt, tmp_ref)))
+                hyp_slots.extend(list(zip(tmp_utt, tmp_hyp)))
+
+                print("REF SLOT:", ref_slots)
+                print("HYP SLOT:", hyp_slots)
     try:            
         results = evaluate(ref_slots, hyp_slots)
     except Exception as ex:
