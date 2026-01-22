@@ -65,7 +65,6 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
 
                 # Get the original words ids using the tokenizer
                 tokens = tokenizer.convert_ids_to_tokens(utt_ids)
-                print("TOKENS:", tokens)
 
                 # Prepare for evaluation, remove padding
                 tmp_ref = []
@@ -122,7 +121,7 @@ def training(params, experiment):
     losses_train = []
     losses_dev = []
     sampled_epochs = []
-    best_f1 = 0
+    best_f1 = -1
     best_model = None
 
     for epoch in tqdm(range(0, epochs)):
@@ -145,13 +144,13 @@ def training(params, experiment):
                 break
             slots_f1.append(f1)
             intents_acc.append(report_intent_dev['accuracy'])
-    model.to(DEVICE)
+    best_model.to(DEVICE)
     
     # Evaluate on the test set
-    results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, model, lang)
+    results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)
     print('Slot F1', results_test['total']['f'])
     print('Intent Acc', report_intent_test['accuracy'])
-    torch.save(model.state_dict(), f'bin/{experiment}.pt')
+    torch.save(best_model.state_dict(), f'bin/{experiment}.pt')
 
 
 def plot_loss(epochs, loss_train, loss_validation, path):
