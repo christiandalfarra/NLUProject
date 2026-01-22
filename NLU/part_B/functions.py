@@ -77,6 +77,9 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
                         tmp_hyp.append((tokens[i], lang.id2slot[seq[i].item()]))
                 ref_slots.extend(tmp_ref)
                 hyp_slots.extend(tmp_hyp)
+
+                print("REF SLOT:", tmp_ref)
+                print("HYP SLOT:", tmp_hyp)
     try:            
         results = evaluate(ref_slots, hyp_slots)
     except Exception as ex:
