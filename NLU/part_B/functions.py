@@ -83,6 +83,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
         print("Warning:", ex)
         ref_s = set([x[1] for x in ref_slots])
         hyp_s = set([x[1] for x in hyp_slots])
+        print("ERRORROEEEEEEEEEE")
         print(hyp_s.difference(ref_s))
         results = {"total":{"f":0}}
         
