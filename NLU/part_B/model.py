@@ -1,5 +1,7 @@
 import torch.nn as nn
 from transformers import BertModel
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hub")
 
 class BertIAS(nn.Module):
     def __init__(self, hidden_size, slot_out, intent_out, dropout_prob=0.1):

@@ -9,6 +9,8 @@ from collections import Counter
 from sklearn.model_selection import train_test_split
 
 from transformers import AutoTokenizer
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hub")
 
 PAD_TOKEN = 0
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

@@ -12,6 +12,8 @@ import numpy as np
 import copy
 from transformers import AutoTokenizer
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hub")
 
 def train_loop(data, optimizer, criterion_slots, criterion_intents, model, clip=5):
     model.train()
@@ -138,7 +140,7 @@ def training(params, experiment):
                 break
             slots_f1.append(f1)
             intents_acc.append(report_intent_dev['accuracy'])
-    best_model.to(DEVICE)
+    model.to(DEVICE)
     
     # Evaluate on the test set
     results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)

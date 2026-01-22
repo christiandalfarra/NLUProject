@@ -1,4 +1,6 @@
 from transformers import BertTokenizerFast
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hub")
 
 # 1. Initialize the tokenizer (use the "Fast" version for offset mapping)
 tokenizer = BertTokenizerFast.from_pretrained("bert-base-uncased")
