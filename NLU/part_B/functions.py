@@ -154,7 +154,7 @@ def training(params, experiment):
     results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, model, lang)
     print('Slot F1', results_test['total']['f'])
     print('Intent Acc', report_intent_test['accuracy'])
-    torch.save(best_model.state_dict(), f'bin/{experiment}.pt')
+    torch.save(model.state_dict(), f'bin/{experiment}.pt')
 
 
 def plot_loss(epochs, loss_train, loss_validation, path):
