@@ -200,8 +200,8 @@ def get_dataloaders():
     test_dataset = IntentsAndSlots(test_raw, lang)
 
     # Dataloader instantiations
-    train_loader = DataLoader(train_dataset, batch_size=1, collate_fn=collate_fn,  shuffle=True)
-    dev_loader = DataLoader(dev_dataset, batch_size=1, collate_fn=collate_fn)
-    test_loader = DataLoader(test_dataset, batch_size=1, collate_fn=collate_fn)
+    train_loader = DataLoader(train_dataset, batch_size=64, collate_fn=collate_fn,  shuffle=True)
+    dev_loader = DataLoader(dev_dataset, batch_size=64, collate_fn=collate_fn)
+    test_loader = DataLoader(test_dataset, batch_size=64, collate_fn=collate_fn)
 
     return train_loader, dev_loader, test_loader, lang
