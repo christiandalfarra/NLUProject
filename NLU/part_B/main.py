@@ -34,11 +34,11 @@ param ={
     'model_arch' : 'LSTM_DROPOUT',
     'emb_size': 300,
     'hidden_size': 768,
-    'dropout_prob': 0.5,
+    'dropout_prob': 0.3,
 
     'lr' : 0.0001,
     'clip': 5,
-    'n_epochs': 20,
+    'n_epochs': 50,
     'patience': 3,
     'multiple_runs': 5,
 
