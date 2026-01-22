@@ -143,7 +143,7 @@ def training(params, experiment):
     model.to(DEVICE)
     
     # Evaluate on the test set
-    results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)
+    results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, model, lang)
     print('Slot F1', results_test['total']['f'])
     print('Intent Acc', report_intent_test['accuracy'])
     torch.save(best_model.state_dict(), f'bin/{experiment}.pt')
