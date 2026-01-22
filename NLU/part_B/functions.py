@@ -60,22 +60,16 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
             # Slot inference 
             output_slots = torch.argmax(slots, dim=1)
             for id_seq, seq in enumerate(output_slots):
-                utt_ids = sample['utterance'][id_seq].tolist()
+                length = sample['slots_len'][id_seq].tolist()               
+                utt_ids = sample['utterances'][id_seq][:length].tolist()
                 gt_ids = sample['y_slots'][id_seq].tolist()
 
                 # Get the original words ids using the tokenizer
                 tokens = tokenizer.convert_ids_to_tokens(utt_ids)
+                print("TOKENS:", tokens)
 
-                # Prepare for evaluation, remove padding
-                tmp_ref = []
-                tmp_hyp = []
 
-                for i, gt_id in enumerate(gt_ids):
-                    if gt_id != PAD_TOKEN:
-                        tmp_ref.append((tokens[i], lang.id2slot[gt_id]))
-                        tmp_hyp.append((tokens[i], lang.id2slot[seq[i].item()]))
-                ref_slots.extend(tmp_ref)
-                hyp_slots.extend(tmp_hyp)
+
     try:            
         results = evaluate(ref_slots, hyp_slots)
     except Exception as ex:
