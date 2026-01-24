@@ -37,7 +37,7 @@ param ={
 
     'nt_interval': 5,  # Used only if optimizer is NTAvSGD
 
-    'optimizer': 'SGD'  # 'SGD' or 'NTAvSGD'
+    'optimizer': 'NTAvSGD'  # 'SGD' or 'NTAvSGD'
 }
 
 if __name__ == "__main__":

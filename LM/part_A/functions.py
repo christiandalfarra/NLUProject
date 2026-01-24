@@ -205,6 +205,7 @@ def grid_search_hyperparameters(param):
     """
     results = []
     i = 0
+    param['model_arch'] = 'RNN'  # Fixed architecture for grid search
     for lr in param['lr']:
         for hid_size in param['hidden_size']:
             for emb_size in param['emb_size']:
