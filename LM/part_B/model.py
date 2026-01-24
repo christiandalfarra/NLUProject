@@ -5,34 +5,33 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class LSTM(nn.Module):
     def __init__(self, emb_size, hidden_size, output_size, pad_index=0, out_dropout=0.1,
-                 emb_dropout=0.1, n_layers=1):
+                 emb_dropout=0.1, n_layers=1, wtied=False, tie_weights=False, variational_dropout = False):
         super(LSTM, self).__init__()
         self.embedding = nn.Embedding(output_size, emb_size, padding_idx=pad_index)
         self.lstm = nn.LSTM(emb_size, hidden_size, n_layers, bidirectional=False, batch_first=True)  
         self.pad_token = pad_index 
         self.output = nn.Linear(hidden_size, output_size)
+
+        self.var_dropout = variational_dropout
+
+        if variational_dropout:
+            self.emb_dropout = VariationalDropout(emb_dropout)
+            self.out_dropout = VariationalDropout(out_dropout)
+
+        if tie_weights:
+            self.output.weight = self.embedding.weight
         
     def forward(self, input_sequence):
         emb = self.embedding(input_sequence)
+        # apply variational dropout if specified
+        if self.var_dropout:
+            emb = self.emb_dropout(emb)
         lstm_out, _  = self.lstm(emb)
+        # apply variational dropout if specified
+        if self.var_dropout:
+            lstm_out = self.out_dropout(lstm_out)
         output = self.output(lstm_out).permute(0,2,1)
         return output
-
-class WeightTiedLSTM(nn.Module):
-    def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1):
-        super(WeightTiedLSTM, self).__init__()
-        self.embed = nn.Embedding(vocab_size, embed_size)
-        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, vocab_size)
-        
-        # Tie weights between embedding and fc layers
-        self.fc.weight = self.embed.weight
-        
-    def forward(self, x, hidden=None):
-        x = self.embed(x)
-        x, hidden = self.lstm(x, hidden)
-        x = self.fc(x)
-        return x, hidden
 
 class VariationalDropout(nn.Module):
     def __init__(self, p=0.5):
@@ -50,5 +49,3 @@ class VariationalDropout(nn.Module):
         #expand to the full input size
         mask = mask.expand_as(x)
         return x * mask
-
-class 

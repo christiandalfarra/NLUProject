@@ -110,33 +110,17 @@ def training(param, experiment):
             param['emb_size'],
             param['hidden_size'],
             vocab_len,
-            pad_index=lang.word2id["<pad>"]
-            ).to(DEVICE)
-
-    elif arch == 'LSTM_DOEMB_LAYER':
-        model = LSTM_DROP_EMB_LAYER(
-            param['emb_size'],
-            param['hidden_size'],
-            vocab_len,
-            pad_index=lang.word2id["<pad>"],
-            emb_dropout=param['emb_dropout']
-            ).to(DEVICE)
-
-    elif arch == 'LSTM_DOEMB_LAST_LAYER':
-        model = LSTM_DROP_EMB_LAST_LAYER(
-            param['emb_size'],
-            param['hidden_size'],
-            vocab_len,
-            pad_index=lang.word2id["<pad>"],
-            emb_dropout=param['emb_dropout'],
-            out_dropout=param['out_dropout']
+            pad_index=lang.word2id["<pad>"], emb_dropout=param['emb_dropout'], out_dropout=param['out_dropout']
             ).to(DEVICE)
 
     else:
-        raise ValueError("Architecture not recognized. Available architectures: RNN, LSTM, LSTM_DOEMB_LAYER, LSTM_DOEMB_LAST_LAYER")
+        raise ValueError("Architecture not recognized. Available architectures: RNN, LSTM")
     model.apply(init_weights)
 
-    optimizer = optim.AdamW(model.parameters(), lr=param['lr']) if param['optimizer'] == 'AdamW' else optim.SGD(model.parameters(), lr=param['lr'])
+    if param['optimizer'] == 'AdamW':
+        optimizer = optim.AdamW(model.parameters(), lr=param['lr'])
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=param['lr'])
     
     criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
@@ -155,6 +139,7 @@ def training(param, experiment):
             sampled_epochs.append(epoch)
             losses_train.append(np.asarray(loss).mean())
             ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
+            
             losses_dev.append(np.asarray(loss_dev).mean())
             perplexity.append(ppl_dev)
             pbar.set_description("PPL: %f" % ppl_dev)
@@ -173,7 +158,7 @@ def training(param, experiment):
     print('Test ppl: ', final_ppl)
     #save weights
     path = f'bin/{experiment}.pt'
-    torch.save(model.state_dict(), path)
+    torch.save(best_model.state_dict(), path)
     #plot the curves for the trainng models
     plot_loss(sampled_epochs, losses_train, losses_dev, f'plots/{experiment}_loss.png')
     plot_perplexity(sampled_epochs, perplexity, f'plots/{experiment}_ppl.png')

@@ -9,8 +9,6 @@ from functions import *
     'model_arch' have different options related to the experiments:
         'RNN' : Simple RNN
         'LSTM' : Simple LSTM
-        'LSTM_DOEMB_LAYER' : LSTM with dropout after embedding layer
-        'LSTM_DOEMB_LAST_LAYER' : LSTM with dropout after embedding layer and before the last linear layer
 
     'optimizer' have two options:
         'SGD' : Stochastic Gradient Descent
@@ -19,7 +17,7 @@ from functions import *
 param ={
     'mode': 'train',  # 'train' or 'evaluate'
 
-    'model_arch' : 'LSTM_DOEMB_LAYER',
+    'model_arch' : 'LSTM',
     'emb_size': 350,
     'hidden_size': 350,
     'emb_dropout': 0.2,
