@@ -30,8 +30,8 @@ param ={
     'n_epochs': 100,
     'patience': 3,
 
-    'weight_tying': False,
-    'var_dropout': False,
+    'weight_tying': True,
+    'var_dropout': True,
     'emb_dropout': 0.5,
     'out_dropout': 0.5,
 
