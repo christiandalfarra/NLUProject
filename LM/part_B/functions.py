@@ -72,7 +72,7 @@ def training(param, experiment):
     train_loader, dev_loader, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
 
-    model = LSTM(param['emb_size'], param['hidden_size'], vocab_len, param['out_dropout'], param['emb_dropout'],
+    model = LSTM(param['emb_size'], param['hidden_size'], vocab_len,pad_index=lang.word2id["<pad>"], emb_dropout=param['emb_dropout'], out_dropout=param['out_dropout'],
                     tie_weights=param['weight_tying'], variational_dropout=param['var_dropout']).to(DEVICE)
     
     model.apply(init_weights)
