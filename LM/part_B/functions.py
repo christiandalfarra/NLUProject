@@ -86,6 +86,7 @@ def training(param, experiment):
 
     losses_train = []
     losses_dev = []
+    perplexity = []
     sampled_epochs = []
     best_ppl = math.inf
 
