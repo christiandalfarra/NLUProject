@@ -126,6 +126,7 @@ def training(param, experiment):
                     # n = param['nt_interval']
                     if not nt_triggered and len(logs) > param['nt_interval'] and ppl_dev > min(logs[:-param['nt_interval']]):
                         # t0 = 0 because we want to start averaging right away
+                        print("NT-AvSGD triggered")
                         nt_triggered = True
                         optimizer = optim.ASGD(model.parameters(), lr = param["lr"], t0=0)
                     if nt_triggered:
