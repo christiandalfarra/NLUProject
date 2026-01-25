@@ -74,6 +74,7 @@ def training(param, experiment):
     train_loader, dev_loader, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
 
+    # Initialize the model
     model = LSTM(param['emb_size'], param['hidden_size'], vocab_len,pad_index=lang.word2id["<pad>"], emb_dropout=param['emb_dropout'], out_dropout=param['out_dropout'],
                     tie_weights=param['weight_tying'], variational_dropout=param['var_dropout']).to(DEVICE)
     
@@ -93,11 +94,10 @@ def training(param, experiment):
     best_ppl = math.inf
 
     best_model = None
-    pbar = tqdm(range(1,param['n_epochs']))
     # used for NT-AvSGD
     logs = []
 
-    for epoch in pbar:
+    for epoch in tqdm(range(1,param['n_epochs'])):
         loss = train_loop(train_loader, optimizer, criterion_train, model, param['clip'])    
         if epoch % 1 == 0:
             sampled_epochs.append(epoch)
@@ -146,6 +146,7 @@ def training(param, experiment):
             else:
                 patience -= 1                    
             if patience <= 0:
+                print("Early stopping")
                 break
 
     best_model.to(DEVICE)
