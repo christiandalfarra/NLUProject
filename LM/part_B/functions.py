@@ -94,10 +94,11 @@ def training(param, experiment):
     best_ppl = math.inf
 
     best_model = None
+    pbar = tqdm(range(1,param['n_epochs']))
     # used for NT-AvSGD
     logs = []
 
-    for epoch in tqdm(range(1,param['n_epochs'])):
+    for epoch in pbar:
         loss = train_loop(train_loader, optimizer, criterion_train, model, param['clip'])    
         if epoch % 1 == 0:
             sampled_epochs.append(epoch)
