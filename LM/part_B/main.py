@@ -25,17 +25,17 @@ param ={
     'emb_size': 350,
     'hidden_size': 350,
 
-    'lr' : 0.1,
+    'lr' : 0.5,
     'clip': 5,
     'n_epochs': 100,
-    'patience': 3,
+    'patience': 5,
 
     'weight_tying': True,
     'var_dropout': True,
     'emb_dropout': 0.5,
     'out_dropout': 0.5,
 
-    'nt_interval': 5,  # Used only if optimizer is NTAvSGD
+    'nt_interval': 3,  # Used only if optimizer is NTAvSGD
 
     'optimizer': 'NTAvSGD'  # 'SGD' or 'NTAvSGD'
 }
