@@ -104,6 +104,7 @@ def training(param, experiment):
             if not ntavsgd_optimizer:
                 # Standard evaluation if we are not using NT-AvSGD
                 ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
+                
             else:
                 # NT-AvSGD specific evaluation
                 # if the NT-AvSGD has been triggered we have to use the averaged weights for evaluation
@@ -113,7 +114,8 @@ def training(param, experiment):
                     for param in model.parameters():
                         temp_param[param] = param.data.clone()
                         param.data = optimizer.state[param]['ax'].clone()
-                    
+
+                    # evaluate with the averaged weights
                     ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
                     # swap back the parameters to continue training
                     for param in model.parameters():
