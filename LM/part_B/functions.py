@@ -159,54 +159,27 @@ def training(param, experiment):
 
     return final_ppl
 
-def training_NTAvSGD(param, experiment):
+def plot_loss(epochs, loss_train, loss_validation, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    fig, ax = plt.subplots()
+    ax.plot(epochs, loss_train, label='Training Loss')
+    ax.plot(epochs, loss_validation, label='Validation Loss')
+    ax.set_title('Training and Validation Loss')
+    ax.set_xlabel('Epochs')
+    ax.set_ylabel('Loss')
+    ax.legend()
+    ax.grid(True)
+    fig.tight_layout()
+    fig.savefig(path)
 
-    train_loader, dev_loader, test_loader, lang = getLoaders()
-    vocab_len = len(lang.word2id)
-
-    model = LSTM(param['emb_size'], param['hidden_size'], vocab_len, param['out_dropout'], param['emb_dropout'],
-                    tie_weights=param['weight_tying'], variational_dropout=param['var_dropout']).to(DEVICE)
-    
-    model.apply(init_weights)
-    # in the case we want to use the AvSGD we have to initialize the optimizer as a classical SGD
-    optimizer = optim.SGD(model.parameters(), lr = param["lr"]) if param['optimizer'] == 'NTAvSGD' else optim.SGD(model.parameters(), lr=param['lr'])
-    criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
-    criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
-
-    losses_train = []
-    losses_dev = []
-    sampled_epochs = []
-    best_ppl = math.inf
-    best_model = None
-    pbar = tqdm(range(1,param['n_epochs']))
-
-    for epoch in pbar:
-        loss = train_loop(train_loader, optimizer, criterion_train, model, param['clip'])    
-        if epoch % 1 == 0:
-            sampled_epochs.append(epoch)
-            losses_train.append(np.asarray(loss).mean())
-            ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
-            losses_dev.append(np.asarray(loss_dev).mean())
-            perplexity.append(ppl_dev)
-            pbar.set_description("PPL: %f" % ppl_dev)
-            if  ppl_dev < best_ppl:
-                best_ppl = ppl_dev
-                best_model = copy.deepcopy(model).to(DEVICE)
-                patience = 3
-            else:
-                patience -= 1
-                
-            if patience <= 0:
-                break
-
-    best_model.to(DEVICE)
-    final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
-    print('Test ppl: ', final_ppl)
-    #save weights
-    path = f'bin/{experiment}.pt'
-    torch.save(best_model.state_dict(), path)
-    #plot the curves for the trainng models
-    plot_loss(sampled_epochs, losses_train, losses_dev, f'plots/{experiment}_loss.png')
-    plot_perplexity(sampled_epochs, perplexity, f'plots/{experiment}_ppl.png')
-
-    return final_ppl
+def plot_perplexity(epochs, perplexity, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    fig, ax = plt.subplots()
+    ax.plot(epochs, perplexity, label='Validation PPL')
+    ax.set_title('Validation PPL')
+    ax.set_xlabel('Epochs')
+    ax.set_ylabel('PPL')
+    ax.legend()
+    ax.grid(True)
+    fig.tight_layout()
+    fig.savefig(path)
