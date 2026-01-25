@@ -6,6 +6,8 @@ import torch.optim as optim
 import torch.nn.functional as F
 import math
 import copy
+import os
+import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 from model import *
@@ -104,7 +106,7 @@ def training(param, experiment):
             if not ntavsgd_optimizer:
                 # Standard evaluation if we are not using NT-AvSGD
                 ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
-                
+
             else:
                 # NT-AvSGD specific evaluation
                 # if the NT-AvSGD has been triggered we have to use the averaged weights for evaluation
