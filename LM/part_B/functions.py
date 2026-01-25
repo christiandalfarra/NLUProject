@@ -75,8 +75,10 @@ def training(param, experiment):
     vocab_len = len(lang.word2id)
 
     # Initialize the model
-    model = LSTM(param['emb_size'], param['hidden_size'], vocab_len,pad_index=lang.word2id["<pad>"], emb_dropout=param['emb_dropout'], out_dropout=param['out_dropout'],
-                    tie_weights=param['weight_tying'], variational_dropout=param['var_dropout']).to(DEVICE)
+    model = LSTM(
+        param['emb_size'], param['hidden_size'], vocab_len,pad_index=lang.word2id["<pad>"], emb_dropout=param['emb_dropout'],
+        out_dropout=param['out_dropout'], tie_weights=param['weight_tying'], variational_dropout=param['var_dropout']
+        ).to(DEVICE)
     
     model.apply(init_weights)
     # Initialize the optimizer, start with SGD for both cases
@@ -114,15 +116,15 @@ def training(param, experiment):
                 if nt_triggered:
                     temp_param = {}
                     # swap the parameters with their averaged version
-                    for param in model.parameters():
-                        temp_param[param] = param.data.clone()
-                        param.data = optimizer.state[param]['ax'].clone()
+                    for p in model.parameters():
+                        temp_param[p] = p.data.clone()
+                        p.data = optimizer.state[p]['ax'].clone()
 
                     # evaluate with the averaged weights
                     ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
                     # swap back the parameters to continue training
-                    for param in model.parameters():
-                        param.data = temp_param[param].clone()
+                    for p in model.parameters():
+                        p.data = temp_param[p].clone()
                 else:
                     # standard evaluation before NT-AvSGD is triggered
                     ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
