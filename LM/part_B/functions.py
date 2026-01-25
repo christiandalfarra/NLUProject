@@ -129,10 +129,6 @@ def training(param, experiment):
                         print("NT-AvSGD triggered")
                         nt_triggered = True
                         optimizer = optim.ASGD(model.parameters(), lr = param["lr"], t0=0)
-                    if nt_triggered:
-                        temp_param = {}
-                        for param in model.parameters():
-                            temp_param[param] = param.data.clone()
                     logs.append(ppl_dev)
             
             losses_dev.append(np.asarray(loss_dev).mean())
