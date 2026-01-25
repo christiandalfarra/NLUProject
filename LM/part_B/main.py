@@ -25,7 +25,7 @@ param ={
     'emb_size': 350,
     'hidden_size': 350,
 
-    'lr' : 1.0,
+    'lr' : 2.0,
     'clip': 5,
     'n_epochs': 100,
     'patience': 5,
