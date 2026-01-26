@@ -17,7 +17,7 @@ from functions import *
 param ={
     'mode': 'train',  # 'train' or 'evaluate'
 
-    'model_arch' : 'LSTM',
+    'model_arch' : 'RNN',
     'emb_size': 350,
     'hidden_size': 350,
     'emb_dropout': 0.2,
