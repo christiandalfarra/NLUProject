@@ -110,7 +110,9 @@ def training(param, experiment):
             param['emb_size'],
             param['hidden_size'],
             vocab_len,
-            pad_index=lang.word2id["<pad>"], emb_dropout=param['emb_dropout'], out_dropout=param['out_dropout']
+            pad_index=lang.word2id["<pad>"], 
+            emb_dropout=param['emb_dropout'], 
+            out_dropout=param['out_dropout']
             ).to(DEVICE)
 
     else:
@@ -176,7 +178,7 @@ def testing(param, model_path):
             vocab_len,
             pad_index
             ).to(DEVICE)
-    elif param['model_arch'] in ['LSTM', 'LSTM_DOEMB_LAYER', 'LSTM_DOEMB_LAST_LAYER']:
+    elif param['model_arch'] =='LSTM':
         model = LSTM(
             param['emb_size'],
             param['hidden_size'],

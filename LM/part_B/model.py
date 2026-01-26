@@ -5,7 +5,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class LSTM(nn.Module):
     def __init__(self, emb_size, hidden_size, output_size, pad_index=0, emb_dropout=0.1,
-                 out_dropout=0.1, n_layers=1, wtied=False, tie_weights=False, variational_dropout = False):
+                 out_dropout=0.1, n_layers=1, tie_weights=False, variational_dropout = False):
         super(LSTM, self).__init__()
         self.embedding = nn.Embedding(output_size, emb_size, padding_idx=pad_index)
         self.lstm = nn.LSTM(emb_size, hidden_size, n_layers, bidirectional=False, batch_first=True)  

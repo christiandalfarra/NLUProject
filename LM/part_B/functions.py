@@ -164,6 +164,23 @@ def training(param, experiment):
 
     return final_ppl
 
+def testing(param, model_path):
+    train_loader, dev_loader, test_loader, lang = getLoaders()
+    vocab_len = len(lang.word2id)
+    pad_index = lang.word2id["<pad>"]
+    model = LSTM(param['emb_size'], param['hidden_size'], vocab_len, pad_index).to(DEVICE)
+    
+    model.load_state_dict(torch.load(model_path, map_location=DEVICE))
+    model.to(DEVICE)
+
+    # Set to evaluation mode (if inferencing)
+    model.eval()
+    print('Model loaded and set to evaluation mode.')
+    criterion_eval = nn.CrossEntropyLoss(ignore_index=pad_index, reduction='sum')
+    final_ppl,  _ = eval_loop(test_loader, criterion_eval, model)
+    print('model tested', model_path)
+    return final_ppl
+
 def plot_loss(epochs, loss_train, loss_validation, path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     fig, ax = plt.subplots()
