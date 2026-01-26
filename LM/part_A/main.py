@@ -20,8 +20,8 @@ param ={
     'model_arch' : 'LSTM',
     'emb_size': 350,
     'hidden_size': 350,
-    'emb_dropout': 0.5,
-    'out_dropout': 0.0,
+    'emb_dropout': 0.2,
+    'out_dropout': 0.2,
 
     'lr' : 0.5,
     'clip': 5,
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     #grid_search_hyperparameters(param)
 
     if param['mode'] == 'train':
-        training(param, experiment=f"exp500_embDO_0_5_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}")
+        training(param, experiment=f"exp500_embDO_0_2_outDO_0_2_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}")
     elif param['mode'] == 'evaluate':
         test_ppl = testing(param, model_path=f'bin/exp_{param["model_arch"]}_lr{param["lr"]}_{param["optimizer"]}.pt')
         print('Test ppl: ', test_ppl)
