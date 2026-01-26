@@ -20,10 +20,10 @@ param ={
     'model_arch' : 'LSTM',
     'emb_size': 350,
     'hidden_size': 350,
-    'emb_dropout': 0.2,
-    'out_dropout': 0.2,
+    'emb_dropout': 0.0,
+    'out_dropout': 0.0,
 
-    'lr' : 0.1,
+    'lr' : 0.5,
     'clip': 5,
     'n_epochs': 100,
     'patience': 3,
