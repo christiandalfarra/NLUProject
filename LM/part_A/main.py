@@ -23,12 +23,12 @@ param ={
     'emb_dropout': 0.2,
     'out_dropout': 0.2,
 
-    'lr' : 0.5,
+    'lr' : 0.0002,
     'clip': 5,
     'n_epochs': 100,
     'patience': 3,
 
-    'optimizer': 'SGD'  # 'SGD' or 'AdamW'
+    'optimizer': 'AdamW'  # 'SGD' or 'AdamW'
 }
 
 if __name__ == "__main__":
