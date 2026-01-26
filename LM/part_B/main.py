@@ -7,6 +7,8 @@ import argparse
 param ={
     'emb_size': 350,
     'hidden_size': 350,
+    'emb_dropout': 0.0,
+    'out_dropout': 0.0,
 
     'lr' : 0.5,
     'clip': 5,
