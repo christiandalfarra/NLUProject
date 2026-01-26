@@ -18,7 +18,7 @@ class RNN(nn.Module):
         return output
 
 class LSTM(nn.Module):
-    def __init__(self, emb_size, hidden_size, output_size, pad_index=0, emb_dropout=0.1, out_dropout=0.1,
+    def __init__(self, emb_size, hidden_size, output_size, pad_index=0, emb_dropout=0.0, out_dropout=0.0,
                   n_layers=1):
         super(LSTM, self).__init__()
         self.embedding = nn.Embedding(output_size, emb_size, padding_idx=pad_index)
