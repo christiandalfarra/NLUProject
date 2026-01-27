@@ -46,13 +46,15 @@ if __name__ == "__main__":
             print('Optimizer must be either "SGD" or "NTAvSGD"')
             exit()
         param['lr'] = args.lr
-        param['optimizer'] = args.optimizer if args.optimizer is not None else param['optimizer']
+        param['optimizer'] = args.optimizer
         param['weight_tying'] = args.weight_tying
         param['var_dropout'] = args.var_dropout
         if args.var_dropout:
             param['emb_dropout'] = args.emb_dropout
             param['out_dropout'] = args.out_dropout
         if param['optimizer'] == 'NTAvSGD':
+            print('Using NT-AvSGD optimizer')
+            print('NT-AvSGD interval: ', args.nt_interval)
             if args.nt_interval is None:
                 print('Please provide an NT-AvSGD interval')
                 exit()
