@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--var_dropout', action='store_true', default=False, help='use variational dropout or not')
     parser.add_argument('--emb_dropout', type=float, default=0.0, help='embedding dropout probability')
     parser.add_argument('--out_dropout', type=float, default=0.0, help='output dropout probability')
-    parser.add_argument('--nt_interval', type=int, default=3, help='NT-AvSGD interval for non-monotonicity check')
+    parser.add_argument('--nt_interval', type=int, default=None, help='NT-AvSGD interval for non-monotonicity check')
 
     parser.add_argument('--model_number', type=int, default=None, help='model number for evaluation')
 
