@@ -22,6 +22,7 @@ class LSTM(nn.Module):
             self.output.weight = self.embedding.weight
         
     def forward(self, input_sequence):
+        self.lstm.flatten_parameters()
         emb = self.embedding(input_sequence)
         # apply variational dropout if specified
         if self.var_dropout:

@@ -57,7 +57,7 @@ if __name__ == "__main__":
                 print('Please provide an NT-AvSGD interval')
                 exit()
             param['nt_interval'] = args.nt_interval
-            param['patience'] = 5
+            param['patience'] = args.nt_interval * 2  # just to be sure we have enough epochs before stopping
         training(param, experiment=f"exp_{'WT' if param['weight_tying'] else ''}_{'VD' if param['var_dropout'] else ''}_lr{param['lr']}_{param['optimizer']}")
     elif args.mode == 'evaluate':
         exp_number = args.model_number
