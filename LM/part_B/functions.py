@@ -145,7 +145,7 @@ def training(param, experiment):
             if  ppl_dev < best_ppl:
                 best_ppl = ppl_dev
                 best_model = copy.deepcopy(model).to(DEVICE)
-                patience = 3
+                patience = param['patience']
             else:
                 patience -= 1                    
             if patience <= 0:

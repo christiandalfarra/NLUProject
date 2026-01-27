@@ -53,6 +53,9 @@ if __name__ == "__main__":
             param['emb_dropout'] = args.emb_dropout
             param['out_dropout'] = args.out_dropout
         if param['optimizer'] == 'NTAvSGD':
+            if args.nt_interval is None:
+                print('Please provide an NT-AvSGD interval')
+                exit()
             param['nt_interval'] = args.nt_interval
             param['patience'] = 5
         training(param, experiment=f"exp_{'WT' if param['weight_tying'] else ''}_{'VD' if param['var_dropout'] else ''}_lr{param['lr']}_{param['optimizer']}")
