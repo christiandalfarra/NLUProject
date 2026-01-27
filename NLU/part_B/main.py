@@ -28,17 +28,13 @@ from utils import *
     'optimizer': optimizer to use. Available optimizers: 'SGD' or 'AdamW' or 'Adam'
     """
 param ={
-    'mode': 'train',
-    
-    'emb_size': 300,
+
     'dropout_prob': 0.3,
 
     'lr' : 0.0001,
     'clip': 5,
     'n_epochs': 50,
     'patience': 3,
-
-    'optimizer': 'Adam'  # 'SGD' or 'AdamW' or 'Adam'
 }
 
 if __name__ == "__main__":
@@ -67,6 +63,8 @@ if __name__ == "__main__":
 
         param['lr'] = args.lr
         param['optimizer'] = args.optimizer
+        if args.emb_size is not None:
+            param['emb_size'] = args.emb_size
         if args.dropout_prob is not None:
             param['dropout_prob'] = args.dropout_prob
 
