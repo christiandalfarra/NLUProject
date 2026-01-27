@@ -56,16 +56,16 @@ if __name__ == "__main__":
             exit()
         if exp_number == 1:
             param['model_arch'] = 'RNN'
-            path = f'bin/first.pt'
+            path = f'bin/RNN.pt'
         elif exp_number == 2:
             param['model_arch'] = 'LSTM'
-            path = f'bin/second.pt'
+            path = f'bin/LSTM.pt'
         elif exp_number == 3:
             param['model_arch'] = 'LSTM'
-            path = f'bin/third.pt'
+            path = f'bin/LSTM_DO.pt'
         elif exp_number == 4:
             param['model_arch'] = 'LSTM'
-            path = f'bin/fourth.pt'
+            path = f'bin/LSTM_DO_AdamW.pt'
         else: 
             print('Model number not recognized')
             exit()

@@ -165,7 +165,7 @@ def training(param, experiment):
     return final_ppl
 
 def testing(param, model_path):
-    train_loader, dev_loader, test_loader, lang = getLoaders()
+    _, _, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
     pad_index = lang.word2id["<pad>"]
     model = LSTM(param['emb_size'], param['hidden_size'], vocab_len, pad_index).to(DEVICE)

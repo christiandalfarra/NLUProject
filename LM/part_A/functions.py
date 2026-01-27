@@ -168,7 +168,7 @@ def training(param, experiment):
     return final_ppl
 
 def testing(param, model_path):
-    train_loader, dev_loader, test_loader, lang = getLoaders()
+    _, _, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
     pad_index = lang.word2id["<pad>"]
     if param['model_arch'] == 'RNN':
@@ -203,7 +203,7 @@ def testing(param, model_path):
 def grid_search_hyperparameters(param):
     """
     Perform a grid search over learning rate, embedding size and hidden size.
-    Assumes that param['lr'], param['emb_size'] and param['hidden_size'] are lists of values.
+    Assumes that param['lr'], param['emb_size'] and param['hidden_size'] are lists of values in the param dictionary.
     """
     results = []
     i = 0

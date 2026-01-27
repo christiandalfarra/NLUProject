@@ -4,14 +4,15 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hub")
 
 class BertIAS(nn.Module):
-    def __init__(self, hidden_size, slot_out, intent_out, dropout_prob=0.1):
+    def __init__(self, slot_out, intent_out, dropout_prob=0.1):
         super(BertIAS, self).__init__()
 
         #get the pretrained BERT model
         self.bert = BertModel.from_pretrained('bert-base-uncased')
+        self.hidden_size = self.bert.config.hidden_size
 
-        self.slot_out = nn.Linear(hidden_size, slot_out)
-        self.intent_out = nn.Linear(hidden_size, intent_out)
+        self.slot_out = nn.Linear(self.hidden_size, slot_out)
+        self.intent_out = nn.Linear(self.hidden_size, intent_out)
 
         # Dropout layer as regularization
         self.dropout = nn.Dropout(dropout_prob)

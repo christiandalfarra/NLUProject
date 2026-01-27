@@ -98,8 +98,7 @@ def training(params, experiment):
     out_slot = len(lang.slot2id)
     out_intent = len(lang.intent2id)
 
-    model = BertIAS(hidden_size=params['hidden_size'], 
-                    slot_out=out_slot, 
+    model = BertIAS(slot_out=out_slot, 
                     intent_out=out_intent, 
                     dropout_prob=params['dropout_prob']).to(DEVICE)
     

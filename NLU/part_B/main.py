@@ -33,7 +33,6 @@ param ={
 
     'model_arch' : 'LSTM_DROPOUT',
     'emb_size': 300,
-    'hidden_size': 768,
     'dropout_prob': 0.3,
 
     'lr' : 0.0001,
