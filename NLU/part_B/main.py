@@ -48,6 +48,6 @@ param ={
 if __name__ == "__main__":
     if param['mode'] == 'train':
         print("Training Mode")
-        training(param, "third300300_experiment")
+        training(param, "bert")
     elif param['mode'] == 'inference':
         print("Inference Mode")

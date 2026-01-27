@@ -69,13 +69,11 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
                 # Prepare for evaluation, remove padding
                 tmp_ref = []
                 tmp_hyp = []
-                tmp_utt = []
 
                 for i, gt_id in enumerate(gt_ids):
                     if gt_id != PAD_TOKEN:
                         tmp_ref.append((tokens[i], lang.id2slot[gt_id]))
                         tmp_hyp.append((tokens[i], lang.id2slot[seq[i].item()]))
-                        tmp_utt.append(tokens[i])
 
                 ref_slots.append(tmp_ref)
                 hyp_slots.append(tmp_hyp)
@@ -86,7 +84,6 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
         print("Warning:", ex)
         ref_s = set([x[1] for x in ref_slots])
         hyp_s = set([x[1] for x in hyp_slots])
-        print("ERRROREEEEEE")
         print(hyp_s.difference(ref_s))
         results = {"total":{"f":0}}
         

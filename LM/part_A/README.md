@@ -8,15 +8,6 @@ This repository contains scripts to train and evaluate Recurrent Neural Network 
 - `functions.py`: Contains the core logic for model definition, training loops (`training`), and testing loops (`testing`).
 - `bin/`: Directory where trained model weights (`.pt` files) are saved and loaded from.
 
-## Prerequisites
-
-Ensure you have the following installed:
-
-- Python 3.x
-- PyTorch
-- Matplotlib
-- Numpy
-
 ## Usage
 
 The script is run via `main.py` using the `--mode` argument to switch between training and evaluation.
@@ -50,7 +41,7 @@ python main.py --mode train --model_arch RNN --lr 1.0 --optimizer SGD
 
 Train an LSTM with AdamW and dropout:
 ```bash
-python main.py --mode train --model_arch LSTM --lr 0.001 --optimizer AdamW --emb_dropout 0.3 --out_dropout 0.3
+python main.py --mode train --model_arch LSTM --lr 0.001 --optimizer AdamW --emb_dropout 0.2 --out_dropout 0.2
 ```
 
 ### 2. Evaluating a Model
