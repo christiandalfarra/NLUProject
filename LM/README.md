@@ -1,22 +1,21 @@
-**This file is not mandatory**
-But if you want, here your can add your comments or anything that you want to share with us
-regarding the exercise.
-## Part 1.A
-**Mandatory requirements**: For the following experiments the perplexity must be below 250 (***PPL < 250***).
+# NLU Project: LSTM Language Modeling with Advanced Regularization Techniques
 
-1. Replace RNN with a Long-Short Term Memory (LSTM) network --> [link](https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html)
-2. Add two dropout layers: --> [link](https://pytorch.org/docs/stable/generated/torch.nn.Dropout.html)
-    - one after the embedding layer, 
-    - one before the last linear layer
-3. Replace SGD with AdamW --> [link](https://pytorch.org/docs/stable/generated/torch.optim.AdamW.html)
+This repository implements and evaluates Long Short-Term Memory (LSTM) models for language modeling tasks, incorporating advanced regularization and optimization techniques as described in [Regularizing and Optimizing LSTM Language Models](https://openreview.net/pdf?id=SyyGPP0TZ).
 
-## Part 1.B
-**Mandatory requirements**: For the following experiments the perplexity must be below 250 (***PPL < 250***) and it should be lower than the one achieved in Part 1.1 (i.e. base LSTM).
+## Overview
 
-Starting from the `LM_RNN` in which you replaced the RNN with a LSTM model, apply the following regularisation techniques:
-- Weight Tying 
-- Variational Dropout (no DropConnect)
-- Non-monotonically Triggered AvSGD 
+The project is divided into two main parts:
 
-These techniques are described in [this paper](https://openreview.net/pdf?id=SyyGPP0TZ).
+### Part 1.A
+1. **LSTM Architecture**: Replaced basic RNN with LSTM for better long-term dependency modeling
+2. **Dropout Regularization**: Added dropout after embedding and before output layer
+3. **AdamW Optimizer**: Alternative to SGD with adaptive learning rates and weight decay
 
+### Part 1.B
+1. **Weight Tying**: Shares weights between embedding and output layers to reduce parameters
+2. **Variational Dropout**: Applies the same dropout mask across time steps (not DropConnect)
+3. **NT-AvSGD**: Non-monotonically Triggered Averaged SGD for improved convergence
+
+## References
+
+Merity, S., Keskar, N. S., & Socher, R. (2018). [Regularizing and Optimizing LSTM Language Models](https://openreview.net/pdf?id=SyyGPP0TZ). ICLR 2018.

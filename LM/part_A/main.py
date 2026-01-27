@@ -4,14 +4,9 @@ import matplotlib.pyplot as plt
 from functions import *
 import argparse
 param ={
-    'emb_size': 350,
-    'hidden_size': 350,
-
     'clip': 5,
     'n_epochs': 100,
     'patience': 3,
-
-    'optimizer': 'AdamW'  # 'SGD' or 'AdamW'
 }
 
 if __name__ == "__main__":
@@ -21,8 +16,11 @@ if __name__ == "__main__":
     parser.add_argument('--model_arch', type=str, default=None, help='RNN or LSTM')
     parser.add_argument('--lr', type=float, default=None, help='learning rate')
     parser.add_argument('--optimizer', type=str, default=None, help='SGD or AdamW')
+
     parser.add_argument('--emb_dropout', type=float, default=0.0, help='embedding dropout probability')
     parser.add_argument('--out_dropout', type=float, default=0.0, help='output dropout probability')
+    parser.add_argument('--emb_size', type=int, default=350, help='embedding size')
+    parser.add_argument('--hidden_size', type=int, default=350, help='hidden size')
 
     parser.add_argument('--model_number', type=int, default=None, help='model number for evaluation')
 
@@ -44,8 +42,11 @@ if __name__ == "__main__":
         param['lr'] = args.lr
         param['optimizer'] = args.optimizer
         param['model_arch'] = args.model_arch
+        
         param['emb_dropout'] = args.emb_dropout
         param['out_dropout'] = args.out_dropout
+        param['emb_size'] = args.emb_size
+        param['hidden_size'] = args.hidden_size
 
     if mode == 'train':
         training(param, experiment=f"exp_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}_embDO_{param['emb_dropout']}_outDO_{param['out_dropout']}")
@@ -69,5 +70,5 @@ if __name__ == "__main__":
         else: 
             print('Model number not recognized')
             exit()
-        test_ppl = testing(param, model_path=path)
+        test_ppl = testing(model_path=path)
         print('Test ppl: ', test_ppl)

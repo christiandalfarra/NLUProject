@@ -90,7 +90,7 @@ python main.py --mode evaluate --model_number 1
 
 ## Default Configuration
 
-Unless overridden by CLI arguments, the underlying training loop uses these default parameters defined in `main.py`:
+Training loop uses these default parameters defined in `main.py`:
 
 - Embedding Size: 350
 - Hidden Size: 350

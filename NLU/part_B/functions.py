@@ -148,6 +148,9 @@ def training(params, experiment):
     print('Intent Acc', report_intent_test['accuracy'])
     torch.save(best_model.state_dict(), f'bin/{experiment}.pt')
 
+def test_inference():
+    _, _, test_loader, lang = getLoaders()
+    pass
 
 def plot_loss(epochs, loss_train, loss_validation, path):
     fig, ax = plt.subplots()

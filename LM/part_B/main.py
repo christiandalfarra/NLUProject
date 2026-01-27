@@ -7,8 +7,6 @@ import argparse
 param ={
     'emb_size': 350,
     'hidden_size': 350,
-    'emb_dropout': 0.0,
-    'out_dropout': 0.0,
 
     'lr' : 0.5,
     'clip': 5,
@@ -75,7 +73,7 @@ if __name__ == "__main__":
         else: 
             print('Model number not recognized')
             exit()
-        test_ppl = testing(param, model_path=path)
+        test_ppl = testing(model_path=path)
         print('Test ppl: ', test_ppl)
     else:
         raise ValueError("Mode not recognized. Available modes: 'train' and 'evaluate'")

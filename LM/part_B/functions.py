@@ -157,20 +157,30 @@ def training(param, experiment):
     print('Test ppl: ', final_ppl)
     #save weights
     path = f'bin/{experiment}.pt'
-    torch.save(best_model.state_dict(), path)
+    path = f'bin/{experiment}.pt'
+    saving_obj = {
+        'model_state_dict': best_model.state_dict(),
+        'params': param
+    }
+    torch.save(saving_obj, path)
     #plot the curves for the trainng models
     plot_loss(sampled_epochs, losses_train, losses_dev, f'plots/{experiment}_loss.png')
     plot_perplexity(sampled_epochs, perplexity, f'plots/{experiment}_ppl.png')
 
     return final_ppl
 
-def testing(param, model_path):
+def testing(model_path):
     _, _, test_loader, lang = getLoaders()
     vocab_len = len(lang.word2id)
     pad_index = lang.word2id["<pad>"]
+
+    save_model = torch.load(model_path, map_location=DEVICE)
+    param = save_model['params']
+    model_state_dict = save_model['model_state_dict']
+
     model = LSTM(param['emb_size'], param['hidden_size'], vocab_len, pad_index).to(DEVICE)
     
-    model.load_state_dict(torch.load(model_path, map_location=DEVICE))
+    model.load_state_dict(model_state_dict)
     model.to(DEVICE)
 
     # Set to evaluation mode (if inferencing)

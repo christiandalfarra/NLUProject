@@ -29,6 +29,8 @@ python main.py --mode train --model_arch <ARCH> --lr <RATE> --optimizer <OPT> [o
 
 **Optional Arguments:**
 
+- `--emb_size`: dimension of the embedding layer (default: `350`).
+- `--hidden_size`: dimension of the hidden layer (default: `350`).
 - `--emb_dropout`: Dropout probability for the embedding layer (default: `0.0`).
 - `--out_dropout`: Dropout probability for the output layer (default: `0.0`).
 
@@ -59,21 +61,21 @@ The script expects specific pre-trained files in the `bin/` folder based on the 
 
 | Model Number | Architecture | Corresponding File |
 |--------------|--------------|-------------------|
-| `1` | RNN | `bin/first.pt` |
-| `2` | LSTM | `bin/second.pt` |
-| `3` | LSTM Dropout | `bin/third.pt` |
-| `4` | LSTM Dropout AdamW| `bin/fourth.pt` |
+| `1` | RNN | `bin/RNN.pt` |
+| `2` | LSTM | `bin/LSTM.pt` |
+| `3` | LSTM Dropout | `bin/LSTM_DO.pt` |
+| `4` | LSTM Dropout AdamW| `bin/LSTM_DO_AdamW.pt` |
 
 **Example:**
 
-Evaluate the model stored in `bin/first.pt`:
+Evaluate the model stored in `bin/RNN.pt`:
 ```bash
 python main.py --mode evaluate --model_number 1
 ```
 
 ## Default Configuration
 
-Unless overridden by CLI arguments, the underlying training loop uses these default parameters defined in `main.py`:
+The training loop uses these default parameters defined in `main.py`:
 
 - Embedding Size: 350
 - Hidden Size: 350

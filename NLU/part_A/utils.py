@@ -31,7 +31,7 @@ class Lang:
         self.id2intent = {v: k for k, v in self.intent2id.items()}
 
     def w2id(self, elements, cutoff=None, unk=True):
-        vocab = {"pad": PAD_TOKEN}
+        vocab = {}
         if unk:
             vocab["unk"] = len(vocab)
         count = Counter(elements)
