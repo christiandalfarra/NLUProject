@@ -71,7 +71,7 @@ kiwisolver==1.4.5
 langcodes==3.3.0
 Levenshtein==0.25.0
 MarkupSafe==2.1.5
-ipython==8.13.0
+ipython==8.12.0
 matplotlib==3.7.2
 matplotlib-inline==0.1.6
 mbstrdecoder==1.1.3
