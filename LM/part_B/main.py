@@ -50,6 +50,9 @@ if __name__ == "__main__":
         if args.var_dropout:
             param['emb_dropout'] = args.emb_dropout
             param['out_dropout'] = args.out_dropout
+        else:
+            param['emb_dropout'] = 0.0
+            param['out_dropout'] = 0.0
         if param['optimizer'] == 'NTAvSGD':
             if args.nt_interval is None:
                 print('Please provide an NT-AvSGD interval')
