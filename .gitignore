@@ -3,3 +3,5 @@ LM/part_A/__pycache__/
 LM/part_B/__pycache__/
 NLU/part_A/__pycache__/
 NLU/part_B/__pycache__/
+.vscode/
+.DS_Store
