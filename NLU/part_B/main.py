@@ -18,7 +18,7 @@ param ={
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Config')
-    parser.add_argument('--mode', type=str, default=None, help='train or inference')
+    parser.add_argument('--mode', type=str, default=None, help='train or evaluate')
     parser.add_argument('--lr', type=float, default=None, help='learning rate')
     parser.add_argument('--optimizer', type=str, default='Adam', help='SGD, AdamW, or Adam')
     parser.add_argument('--dropout_prob', type=float, default=0.0, help='dropout probability')
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.mode is None:
-        print('Please provide a mode (train or inference)')
+        print('Please provide a mode (train or evaluate)')
         exit()
     if args.mode == 'train':
         if args.lr is None:
@@ -46,10 +46,9 @@ if __name__ == "__main__":
         experiment = f"bert_lr{param['lr']}_{param['optimizer']}{'_DO' if param['dropout_prob'] > 0 else 'NoDO'}"
         print("Training Mode")
         training(param, experiment)
-    elif args.mode == 'inference':
-        print("Inference Mode")
-        path = 'bin/bert_lr5e-05_AdamW_NoDO.pt'  # Example path to the trained model
+    elif args.mode == 'evaluate':
+        print("Evaluation Mode")
+        path = 'bin/bert_lr5e-05_AdamNoDO.pt'  # Example path to the trained model
         testing(path)
-        print("Inference is not implemented in part_B yet.")
     else:
-        raise ValueError("Mode not recognized. Available modes: 'train' and 'inference'")
+        raise ValueError("Mode not recognized. Available modes: 'train' and 'evaluate'")

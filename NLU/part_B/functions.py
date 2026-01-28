@@ -154,24 +154,15 @@ def training(params, experiment):
     results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)
     print('Slot F1', results_test['total']['f'])
     print('Intent Acc', report_intent_test['accuracy'])
-    save_obj = {
-        'model_state_dict': best_model.state_dict(),
-        'params': params,
-        'lang': lang
-    }
-    torch.save(save_obj, f'bin/{experiment}.pt')
+    torch.save(best_model.state_dict(), f'bin/{experiment}.pt')
 
 def testing(path):
     # Load data
-    _, _, test_loader, _ = get_dataloaders()
+    _, _, test_loader, lang = get_dataloaders()
     
     # Load the saved model
     print(f"Loading model from {path}")
-    saved_model = torch.load(path, map_location=DEVICE)
-    
-    model_state_dict = saved_model['model_state_dict']
-    params = saved_model['params']
-    lang = saved_model['lang']
+    model_state_dict = torch.load(path, map_location=DEVICE)
 
     vocab_len = len(lang.word2id)
     out_slot = len(lang.slot2id)
@@ -179,8 +170,7 @@ def testing(path):
     
     # Create the model with the same architecture
     model = BertIAS(slot_out=out_slot, 
-                    intent_out=out_intent, 
-                    dropout_prob=params['dropout_prob']).to(DEVICE)
+                    intent_out=out_intent).to(DEVICE)
     
     # Load the trained weights
     model.load_state_dict(model_state_dict)
