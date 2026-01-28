@@ -175,6 +175,7 @@ def training(param, experiment):
                 if current_patience <= 0:
                     print("Early stopping triggered\n")
                     break
+        plot_losses(sampled_epochs, losses_train, losses_dev, f'plots/{experiment}_run{run+1}_loss.png')
         
         if best_model is None:
             best_model = model
@@ -276,3 +277,12 @@ def testing(path_to_model):
     
     return results_test, report_intent_test
    
+def plot_losses(sampled_epochs, losses_train, losses_dev, path):
+    plt.figure(num = 3, figsize=(8, 5)).patch.set_facecolor('white')
+    plt.title('Train and Dev Losses')
+    plt.ylabel('Loss')
+    plt.xlabel('Epochs')
+    plt.plot(sampled_epochs, losses_train, label='Train loss')
+    plt.plot(sampled_epochs, losses_dev, label='Dev loss')
+    plt.legend()
+    plt.savefig(path)
