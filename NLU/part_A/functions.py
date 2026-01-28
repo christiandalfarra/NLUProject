@@ -226,7 +226,7 @@ def training(param, experiment):
 def testing(path_to_model):
     # Load the saved model
     print(f"Loading model from {path_to_model}")
-    saved_model = torch.load(path_to_model, map_location=DEVICE)
+    saved_model = torch.load(path_to_model, map_location=DEVICE, weights_only=False)
     
     model_state_dict = saved_model['model_state_dict']
     saved_params = saved_model['params']

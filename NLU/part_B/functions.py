@@ -168,7 +168,7 @@ def training(params, experiment):
 def testing(path):
     # Load the saved model
     print(f"Loading model from {path}")
-    checkpoint = torch.load(path, map_location=DEVICE)
+    checkpoint = torch.load(path, map_location=DEVICE, weights_only=False)
     if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
         model_state_dict = checkpoint["model_state_dict"]
         slot2id = checkpoint.get("slot2id")

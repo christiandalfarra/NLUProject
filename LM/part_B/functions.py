@@ -174,7 +174,7 @@ def testing(model_path):
     vocab_len = len(lang.word2id)
     pad_index = lang.word2id["<pad>"]
 
-    save_model = torch.load(model_path, map_location=DEVICE)
+    save_model = torch.load(model_path, map_location=DEVICE, weights_only=False)
     param = save_model['params']
     model_state_dict = save_model['model_state_dict']
 
