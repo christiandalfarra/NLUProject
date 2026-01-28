@@ -9,7 +9,7 @@ param ={
 
     'lr' : 0.0001,
     'clip': 5,
-    'n_epochs': 200,
+    'n_epochs': 100,
     'patience': 3,
 }
 
