@@ -86,6 +86,7 @@ def training(param, experiment):
     ntavsgd_optimizer = param['optimizer'] == 'NTAvSGD'
     nt_triggered = False
 
+    # Initialize the criterion
     criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
 

@@ -22,17 +22,22 @@ class LSTM(nn.Module):
                   n_layers=1):
         super(LSTM, self).__init__()
         self.embedding = nn.Embedding(output_size, emb_size, padding_idx=pad_index)
+        # use dropout only if specified
         if emb_dropout > 0:
             self.dropout_emb = nn.Dropout(emb_dropout)  # Dropout after embedding
             self.embdropout = True
         else:
             self.embdropout = False
+
         self.lstm = nn.LSTM(emb_size, hidden_size, n_layers, bidirectional=False, batch_first=True) 
+
+        # use dropout only if specified
         if out_dropout > 0:
             self.dropout_out = nn.Dropout(out_dropout) # Dropout before final linear layer
             self.outdropout = True
         else:
             self.outdropout = False
+            
         self.pad_token = pad_index 
         self.output = nn.Linear(hidden_size, output_size)
         

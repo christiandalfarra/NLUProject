@@ -96,6 +96,7 @@ def training(param, experiment):
     train_loader, dev_loader, test_loader, lang = get_dataloaders()
     vocab_len = len(lang.word2id)
 
+    # create the model
     arch = param['model_arch']
     if arch == 'RNN':
         model = RNN(
@@ -119,11 +120,13 @@ def training(param, experiment):
         raise ValueError("Architecture not recognized. Available architectures: RNN, LSTM")
     model.apply(init_weights)
 
+    # define the optimizer
     if param['optimizer'] == 'AdamW':
         optimizer = optim.AdamW(model.parameters(), lr=param['lr'])
     else:
         optimizer = optim.SGD(model.parameters(), lr=param['lr'])
     
+    # define the loss function
     criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
 
@@ -135,6 +138,7 @@ def training(param, experiment):
     best_model = None
     pbar = tqdm(range(1,param['n_epochs']))
     
+    # training loop
     for epoch in pbar:
         loss = train_loop(train_loader, optimizer, criterion_train, model, param['clip'])    
         if epoch % 1 == 0:
@@ -176,11 +180,12 @@ def testing(model_path):
     vocab_len = len(lang.word2id)
     pad_index = lang.word2id["<pad>"]
 
+    # Load the model
     save_model = torch.load(model_path, map_location=DEVICE, weights_only=False)
     param = save_model['params']
     model_state_dict = save_model['model_state_dict']
 
-
+    # Create the model
     if param['model_arch'] == 'RNN':
         model = RNN(
             param['emb_size'],
@@ -199,6 +204,7 @@ def testing(model_path):
         print('Error: model architecture not recognized')
         return None
     
+    # Load the model state dict
     model.load_state_dict(model_state_dict)
     model.to(DEVICE)
 
@@ -209,24 +215,3 @@ def testing(model_path):
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, model)
     print('model tested', model_path)
     return final_ppl
-
-def grid_search_hyperparameters(param):
-    """
-    Perform a grid search over learning rate, embedding size and hidden size.
-    Assumes that param['lr'], param['emb_size'] and param['hidden_size'] are lists of values in the param dictionary.
-    """
-    results = []
-    i = 0
-    param['model_arch'] = 'RNN'  # Fixed architecture for grid search
-    for lr in param['lr']:
-        for hid_size in param['hidden_size']:
-            for emb_size in param['emb_size']:
-                new_param = param.copy()
-                new_param['lr'] = lr
-                new_param['hidden_size'] = hid_size
-                new_param['emb_size'] = emb_size
-                result = training(new_param, f'exp{i}_RNN_embsize{emb_size}_hidsize{hid_size}_lr{lr}_{param["optimizer"]}.pt')
-                results.append(result)
-                print(result)
-                i += 1
-    return results

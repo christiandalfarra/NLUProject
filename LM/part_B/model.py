@@ -14,10 +14,12 @@ class LSTM(nn.Module):
 
         self.var_dropout = variational_dropout
 
+        # apply variational dropout if specified
         if variational_dropout:
             self.emb_dropout = VariationalDropout(emb_dropout)
             self.out_dropout = VariationalDropout(out_dropout)
-
+        
+        # tie weights if specified
         if tie_weights:
             self.output.weight = self.embedding.weight
         
@@ -47,6 +49,6 @@ class VariationalDropout(nn.Module):
         mask = x.new_empty(x.size(0), 1, x.size(2), requires_grad=False).bernoulli_(1 - self.p)
         mask = mask.div_(1 - self.p)
 
-        #expand to the full input size
+        #expand to the input size
         mask = mask.expand_as(x)
         return x * mask
