@@ -137,7 +137,7 @@ def collate_fn(data):
     return new_item
 
 
-def get_dataloaders():
+def get_dataloaders(lang=None):
     
     tmp_train_raw = load_data(os.path.join("..", "dataset", "train.json"))
     test_raw = load_data(os.path.join("..", "dataset", "test.json"))
@@ -164,13 +164,15 @@ def get_dataloaders():
     train_raw = X_train
     dev_raw = X_dev
 
-    words = sum([x['utterance'].split() for x in train_raw], []) # No set() since we want to compute the cutoff
-    corpus = train_raw + dev_raw + test_raw
+    if lang is None:
+        words = sum([x['utterance'].split() for x in train_raw], []) # No set() since we want to compute the cutoff
+        corpus = train_raw + dev_raw + test_raw
 
-    slots = set(sum([line['slots'].split() for line in corpus],[]))
-    intents = set([line['intent'] for line in corpus])
+        # Sorting makes label ids deterministic across runs.
+        slots = sorted(set(sum([line['slots'].split() for line in corpus],[])))
+        intents = sorted(set([line['intent'] for line in corpus]))
 
-    lang = Lang(words, intents, slots, cutoff=0)
+        lang = Lang(words, intents, slots, cutoff=0)
 
     # Create our datasets
     train_dataset = IntentsAndSlots(train_raw, lang)

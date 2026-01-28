@@ -224,16 +224,18 @@ def training(param, experiment):
         print("Warning: No best model found across runs")
                 
 def testing(path_to_model):
-    # Load data
-    _, _, test_loader, lang = get_dataloaders()
-    
     # Load the saved model
     print(f"Loading model from {path_to_model}")
     saved_model = torch.load(path_to_model, map_location=DEVICE)
     
     model_state_dict = saved_model['model_state_dict']
     saved_params = saved_model['params']
-    lang = saved_model['lang']
+    lang = saved_model.get('lang')
+    if lang is None:
+        print("Warning: checkpoint has no saved lang mapping; results may be incorrect.")
+        _, _, test_loader, lang = get_dataloaders()
+    else:
+        _, _, test_loader, _ = get_dataloaders(lang=lang)
 
     vocab_len = len(lang.word2id)
     out_slot = len(lang.slot2id)
