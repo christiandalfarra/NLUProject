@@ -148,6 +148,7 @@ def training(params, experiment):
             slots_f1.append(f1)
             intents_acc.append(report_intent_dev['accuracy'])
     best_model.to(DEVICE)
+    plot_losses(sampled_epochs, losses_train, losses_dev, f'plots/{experiment}_loss.png')
     
     # Evaluate on the test set
     results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)
@@ -159,26 +160,12 @@ def test_inference():
     _, _, test_loader, lang = getLoaders()
     pass
 
-def plot_loss(epochs, loss_train, loss_validation, path):
-    fig, ax = plt.subplots()
-    ax.plot(epochs, loss_train, label='Training Loss')
-    ax.plot(epochs, loss_validation, label='Validation Loss')
-    ax.set_title('Training and Validation Loss')
-    ax.set_xlabel('Epochs')
-    ax.set_ylabel('Loss')
-    ax.legend()
-    ax.grid(True)
-    fig.tight_layout()
-    fig.savefig(path)
-
-def plot_f1_and_accuracy(epochs, f1_list, acc_list, name):
-    fig, ax = plt.subplots()
-    ax.plot(epochs, f1_list, label='Validation F1 score')
-    ax.plot(epochs, acc_list, label='Validation accuracy')
-    ax.set_title('Validation F1 and Accuracy')
-    ax.set_xlabel('Epochs')
-    ax.set_ylabel('Score')
-    ax.legend()
-    ax.grid(True)
-    fig.tight_layout()
-    fig.savefig(name)
+def plot_losses(sampled_epochs, losses_train, losses_dev, path):
+    plt.figure(num = 3, figsize=(8, 5)).patch.set_facecolor('white')
+    plt.title('Train and Dev Losses')
+    plt.ylabel('Loss')
+    plt.xlabel('Epochs')
+    plt.plot(sampled_epochs, losses_train, label='Train loss')
+    plt.plot(sampled_epochs, losses_dev, label='Dev loss')
+    plt.legend()
+    plt.savefig(path)
