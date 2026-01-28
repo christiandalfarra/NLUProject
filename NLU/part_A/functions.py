@@ -115,11 +115,15 @@ def training(param, experiment):
 
     slots_f1 = []
     intents_acc = []
+    
+    # Track best model across all runs
+    best_model_overall = None
+    best_f1_overall = 0
 
     for run in tqdm(range(0, runs)):
         print(f"\nRun {run+1}/{runs}\n")
         #Create the model
-        model = ModelIAS(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, 
+        model = ModelIAS(param['emb_size'], param['hidden_size'], out_slot, out_intent, vocab_len, 
                          bidirectional=param.get('bidirectional', False),
                          dropout_prob=param.get('dropout_prob', 0))
     
@@ -142,6 +146,7 @@ def training(param, experiment):
         sampled_epochs = []
         best_f1 = 0
         best_model = None
+        current_patience = patience  # Use a separate variable for current run's patience
 
         for epoch in tqdm(range(0, epochs)):
             loss_train = train_loop(train_loader, optimizer, criterion_slots, criterion_intents, model, clip)
@@ -154,23 +159,108 @@ def training(param, experiment):
                 if f1 > best_f1:
                     best_f1 = f1
                     best_model = copy.deepcopy(model)
-                    patience = param['patience'] # reset patience if we have a new best model
+                    current_patience = patience  # reset patience if we have a new best model
                 else:
-                    patience -= 1
-                if patience <= 0:
+                    current_patience -= 1
+                if current_patience <= 0:
                     print("Early stopping triggered\n")
                     break
+        
         if best_model is None:
             best_model = model
+        
         best_model.to(DEVICE)
         results_test, report_intent_test, loss_array_test = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)
-        slots_f1.append(results_test['total']['f'])
+        
+        # Get F1 score for this run
+        run_f1 = results_test['total']['f']
+        slots_f1.append(run_f1)
         intents_acc.append(report_intent_test['accuracy'])
+        
+        # Update overall best model if this run's model is better
+        if run_f1 > best_f1_overall:
+            best_f1_overall = run_f1
+            best_model_overall = copy.deepcopy(best_model)
+            print(f"New best model found in run {run+1} with F1: {best_f1_overall:.3f}")
     
     slots_f1 = np.asarray(slots_f1)
     intents_acc = np.asarray(intents_acc)
-    # Stat print
-    print('Slot F1', round(slots_f1.mean(),3), '+-', round(slots_f1.std(),3))
-    print('Intent Acc', round(intents_acc.mean(), 3), '+-', round(intents_acc.std(), 3))
-    torch.save(best_model.state_dict(), f'bin/{experiment}.pt')
+    
+    # Stat print across all runs
+    print('Statistics across all runs:')
+    print('Slot F1:', round(slots_f1.mean(),3), '+-', round(slots_f1.std(),3))
+    print('Intent Acc:', round(intents_acc.mean(), 3), '+-', round(intents_acc.std(), 3))
+    print('Best F1 across all runs:', round(best_f1_overall, 3))
+    
+    # Final evaluation of the best model on test set
+    print('Final evaluation of best model on test set:')
+    if best_model_overall is not None:
+        best_model_overall.to(DEVICE)
+        results_test_final, report_intent_test_final, _ = eval_loop(test_loader, criterion_slots, criterion_intents, best_model_overall, lang)
+        
+        print(f"Slot F1: {results_test_final['total']['f']:.3f}")
+        print(f"Intent Accuracy: {report_intent_test_final['accuracy']:.3f}")
+        
+        # Save the best model
+        saving_obj = {
+            'model_state_dict': best_model_overall.state_dict(),
+            'params': param
+        }
+        torch.save(saving_obj, f'bin/{experiment}.pt')
+        print(f"\nBest model saved to bin/{experiment}.pt")
+    else:
+        print("Warning: No best model found across runs")
                 
+def testing(path_to_model):
+    def testing(param, model_path):
+    # Load data
+    train_loader, dev_loader, test_loader, lang = get_dataloaders()
+    vocab_len = len(lang.word2id)
+    out_slot = len(lang.slot2id)
+    out_intent = len(lang.intent2id)
+    
+    # Load the saved model
+    print(f"Loading model from {model_path}")
+    saved_model = torch.load(model_path, map_location=DEVICE)
+    
+    model_state_dict = saved_model['model_state_dict']
+    saved_params = saved_model['params']
+    
+    # Create the model with the same architecture
+    model = ModelIAS(
+        saved_params['emb_size'], 
+        saved_params['hidden_size'], 
+        out_slot, 
+        out_intent, 
+        vocab_len,
+        bidirectional=saved_params.get('bidirectional', False),
+        dropout_prob=saved_params.get('dropout_prob', 0)
+    )
+    
+    # Load the trained weights
+    model.load_state_dict(model_state_dict)
+    model.to(DEVICE)
+    
+    # Define loss criteria
+    criterion_slots = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN)
+    criterion_intents = nn.CrossEntropyLoss()
+    
+    # Evaluate on test set
+    print("\nEvaluating on test set...")
+    results_test, report_intent_test, loss_array_test = eval_loop(
+        test_loader, 
+        criterion_slots, 
+        criterion_intents, 
+        model, 
+        lang
+    )
+    
+    # Print results
+    print('\n' + '='*50)
+    print('Test Set Results:')
+    print(f"Slot F1: {results_test['total']['f']:.3f}")
+    print(f"Intent Accuracy: {report_intent_test['accuracy']:.3f}")
+    print('='*50 + '\n')
+    
+    return results_test, report_intent_test
+   

@@ -8,7 +8,6 @@ param ={
     'emb_size': 350,
     'hidden_size': 350,
 
-    'lr' : 0.5,
     'clip': 5,
     'n_epochs': 100,
     'patience': 3,
@@ -32,14 +31,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.mode is None:
-        print('Please provide a mode (train or evaluate)')
+        print('Please provide a mode --mode (train or evaluate)')
         exit()
     if args.mode == 'train':
         if args.lr is None:
-            print('Please provide a learning rate')
+            print('Please provide a learning rate --lr value')
             exit()
         if args.optimizer is None:
-            print('Please provide an optimizer (SGD or NTAvSGD)')
+            print('Please provide an optimizer --optimizer (SGD or NTAvSGD)')
             exit()
         if args.optimizer not in ['SGD', 'NTAvSGD']:
             print('Optimizer must be either "SGD" or "NTAvSGD"')
@@ -53,7 +52,7 @@ if __name__ == "__main__":
         param['out_dropout'] = args.out_dropout
         if param['optimizer'] == 'NTAvSGD':
             if args.nt_interval is None:
-                print('Please provide an NT-AvSGD interval')
+                print('Please provide an NT-AvSGD interval --nt_interval value')
                 exit()
             param['nt_interval'] = args.nt_interval
             param['patience'] = args.nt_interval * 2  # just to be sure we have enough epochs before stopping
@@ -61,16 +60,16 @@ if __name__ == "__main__":
     elif args.mode == 'evaluate':
         exp_number = args.model_number
         if exp_number is None:
-            print('Please provide a model number to evaluate')
+            print('Please provide a model number to evaluate --model_number value (1,2,3,4)')
             exit()
         if exp_number == 1:
             path = f'bin/exp_LSTM_lr0.5_SGD.pt'
         elif exp_number == 2:
-            path = f'bin/exp_LSTM_WT.pt'
+            path = f'bin/exp_WT_lr0.5_SGD.pt'
         elif exp_number == 3:
-            path = f'bin/third.pt'
+            path = f'bin/exp_WT_VD_lr0.5_SGD.pt'
         elif exp_number == 4:
-            path = f'bin/fourth.pt'
+            path = f'bin/exp_WT_VD_lr2.0_NTAvSGD.pt'
         else: 
             print('Model number not recognized')
             exit()
