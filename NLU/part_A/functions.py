@@ -216,9 +216,7 @@ def training(param, experiment):
         saving_obj = {
             'model_state_dict': best_model_overall.state_dict(),
             'params': param,
-            "w2id": w2id, 
-            "slot2id": slot2id, 
-            "intent2id": intent2id
+            "lang": lang
         }
         torch.save(saving_obj, f'bin/{experiment}.pt')
         print(f"\nBest model saved to bin/{experiment}.pt")
