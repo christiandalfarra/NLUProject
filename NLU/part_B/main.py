@@ -44,7 +44,7 @@ if __name__ == "__main__":
         if args.dropout_prob is not None:
             param['dropout_prob'] = args.dropout_prob
 
-        experiment = f"bert_lr{param['lr']}_{param['optimizer']}_{'DO' if param['dropout_prob'] > 0 else 'NoDO'}"
+        experiment = f"bert_lr{param['lr']}_{param['optimizer']}{'_DO' if param['dropout_prob'] > 0 else 'NoDO'}"
         print("Training Mode")
         training(param, experiment)
     elif args.mode == 'inference':
