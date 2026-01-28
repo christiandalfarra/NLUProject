@@ -34,11 +34,16 @@ def init_weights(mat):
 def train_loop(data, optimizer, criterion_slots, criterion_intents, model, clip=5):
     model.train()
     loss_array = []
+    device = next(model.parameters()).device
     for sample in data:
         optimizer.zero_grad() # Zeroing the gradient
-        slots, intent = model(sample['utterances'], sample['slots_len'])
-        loss_intent = criterion_intents(intent, sample['intents'])
-        loss_slot = criterion_slots(slots, sample['y_slots'])
+        utterances = sample['utterances'].to(device)
+        slots_len = sample['slots_len'].to(device)
+        intents = sample['intents'].to(device)
+        y_slots = sample['y_slots'].to(device)
+        slots, intent = model(utterances, slots_len)
+        loss_intent = criterion_intents(intent, intents)
+        loss_slot = criterion_slots(slots, y_slots)
         loss = loss_intent + loss_slot # In joint training we sum the losses. 
                                        # Is there another way to do that?
         loss_array.append(loss.item())
@@ -51,6 +56,7 @@ def train_loop(data, optimizer, criterion_slots, criterion_intents, model, clip=
 def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     model.eval()
     loss_array = []
+    device = next(model.parameters()).device
     
     ref_intents = []
     hyp_intents = []
@@ -60,9 +66,13 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     #softmax = nn.Softmax(dim=1) # Use Softmax if you need the actual probability
     with torch.no_grad(): # It used to avoid the creation of computational graph
         for sample in data:
-            slots, intents = model(sample['utterances'], sample['slots_len'])
-            loss_intent = criterion_intents(intents, sample['intents'])
-            loss_slot = criterion_slots(slots, sample['y_slots'])
+            utterances = sample['utterances'].to(device)
+            slots_len = sample['slots_len'].to(device)
+            intents_t = sample['intents'].to(device)
+            y_slots_t = sample['y_slots'].to(device)
+            slots, intents = model(utterances, slots_len)
+            loss_intent = criterion_intents(intents, intents_t)
+            loss_slot = criterion_slots(slots, y_slots_t)
             loss = loss_intent + loss_slot 
             loss_array.append(loss.item())
             # Intent inference
