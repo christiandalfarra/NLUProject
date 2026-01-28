@@ -114,7 +114,7 @@ def collate_fn(data, pad_token):
     new_item["number_tokens"] = sum(lengths)
     return new_item
 
-def getLoaders():
+def get_dataloaders():
     train_raw = read_file("../dataset/PennTreeBank/ptb.train.txt")
     dev_raw = read_file("../dataset/PennTreeBank/ptb.valid.txt")
     test_raw = read_file("../dataset/PennTreeBank/ptb.test.txt")

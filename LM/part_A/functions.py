@@ -93,7 +93,7 @@ def plot_perplexity(epochs, perplexity, path):
     fig.savefig(path)
 
 def training(param, experiment):
-    train_loader, dev_loader, test_loader, lang = getLoaders()
+    train_loader, dev_loader, test_loader, lang = get_dataloaders()
     vocab_len = len(lang.word2id)
 
     arch = param['model_arch']
@@ -172,7 +172,7 @@ def training(param, experiment):
     return final_ppl
 
 def testing(model_path):
-    _, _, test_loader, lang = getLoaders()
+    _, _, test_loader, lang = get_dataloaders()
     vocab_len = len(lang.word2id)
     pad_index = lang.word2id["<pad>"]
 

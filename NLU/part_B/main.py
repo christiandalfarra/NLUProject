@@ -48,6 +48,8 @@ if __name__ == "__main__":
         training(param, experiment)
     elif args.mode == 'inference':
         print("Inference Mode")
+        path = 'bin/bert_lr5e-05_AdamW_NoDO.pt'  # Example path to the trained model
+        testing(path)
         print("Inference is not implemented in part_B yet.")
     else:
         raise ValueError("Mode not recognized. Available modes: 'train' and 'inference'")

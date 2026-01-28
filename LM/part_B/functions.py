@@ -71,7 +71,7 @@ def train_loop(data, optimizer, criterion, model, clip=5):
     return sum(loss_array)/sum(number_of_tokens)
 
 def training(param, experiment):
-    train_loader, dev_loader, test_loader, lang = getLoaders()
+    train_loader, dev_loader, test_loader, lang = get_dataloaders()
     vocab_len = len(lang.word2id)
 
     # Initialize the model
@@ -170,7 +170,7 @@ def training(param, experiment):
     return final_ppl
 
 def testing(model_path):
-    _, _, test_loader, lang = getLoaders()
+    _, _, test_loader, lang = get_dataloaders()
     vocab_len = len(lang.word2id)
     pad_index = lang.word2id["<pad>"]
 

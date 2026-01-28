@@ -272,8 +272,6 @@ def testing(path_to_model):
     print('Test Set Results:')
     print(f"Slot F1: {results_test['total']['f']:.3f}")
     print(f"Intent Accuracy: {report_intent_test['accuracy']:.3f}")
-    
-    return results_test, report_intent_test
    
 def plot_losses(sampled_epochs, losses_train, losses_dev, path):
     plt.figure(num = 3, figsize=(8, 5)).patch.set_facecolor('white')

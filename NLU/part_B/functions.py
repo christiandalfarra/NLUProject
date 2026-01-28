@@ -154,11 +154,56 @@ def training(params, experiment):
     results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)
     print('Slot F1', results_test['total']['f'])
     print('Intent Acc', report_intent_test['accuracy'])
-    torch.save(best_model.state_dict(), f'bin/{experiment}.pt')
+    save_obj = {
+        'model_state_dict': best_model.state_dict(),
+        'params': params,
+        'lang': lang
+    }
+    torch.save(save_obj, f'bin/{experiment}.pt')
 
-def test_inference():
-    _, _, test_loader, lang = getLoaders()
-    pass
+def testing(path):
+    # Load data
+    _, _, test_loader, _ = get_dataloaders()
+    
+    # Load the saved model
+    print(f"Loading model from {path}")
+    saved_model = torch.load(path, map_location=DEVICE)
+    
+    model_state_dict = saved_model['model_state_dict']
+    params = saved_model['params']
+    lang = saved_model['lang']
+
+    vocab_len = len(lang.word2id)
+    out_slot = len(lang.slot2id)
+    out_intent = len(lang.intent2id)
+    
+    # Create the model with the same architecture
+    model = BertIAS(slot_out=out_slot, 
+                    intent_out=out_intent, 
+                    dropout_prob=params['dropout_prob']).to(DEVICE)
+    
+    # Load the trained weights
+    model.load_state_dict(model_state_dict)
+    model.to(DEVICE)
+    
+    # Define loss criteria
+    criterion_slots = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN)
+    criterion_intents = nn.CrossEntropyLoss()
+    
+    # Evaluate on test set
+    print("\nEvaluating on test set...")
+    results_test, report_intent_test, loss_array_test = eval_loop(
+        test_loader, 
+        criterion_slots, 
+        criterion_intents, 
+        model, 
+        lang
+    )
+    
+    # Print results
+    print('Test Set Results:')
+    print(f"Slot F1: {results_test['total']['f']:.3f}")
+    print(f"Intent Accuracy: {report_intent_test['accuracy']:.3f}")
 
 def plot_losses(sampled_epochs, losses_train, losses_dev, path):
     plt.figure(num = 3, figsize=(8, 5)).patch.set_facecolor('white')
