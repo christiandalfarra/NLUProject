@@ -5,31 +5,8 @@
 import argparse
 from functions import *
 from utils import *
-""" 
-    'mode':
-        'train' : to train the model
-        'inference' : to test the model
-    'model_arch' have different options related to the experiments:
-        'LSTM' : Simple LSTM
-        'LSTM_BIDIRECTIONAL' : Bidirectional LSTM
-        'LSTM_DROPOUT' : LSTM Bidirectional with dropout embedding layer and the last linear layer
-
-    'emb_size': size of the embedding layer
-    'hidden_size': size of the hidden layer
-    'dropout_prob': dropout probability (only for the model with dropout)
-    'lr' : learning rate
-    'clip': gradient clipping value
-    'patience': number of epochs to wait before early stopping
-
-    'n_epochs': number of epochs
-    'multiple_runs': number of runs with different weight initialization
-
-    'optimizer': optimizer to use. Available optimizers: 'SGD' or 'AdamW' or 'Adam'
-    """
 param ={
-    'mode': 'train',
 
-    'model_arch' : 'LSTM_DROPOUT',
     'emb_size': 300,
     'hidden_size': 300,
     'dropout_prob': 0.5,
@@ -46,10 +23,11 @@ param ={
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Config')
     parser.add_argument('--mode', type=str, default=None, help='train or inference')
-    parser.add_argument('--model_arch', type=str, default=None, help='LSTM, LSTM_BIDIRECTIONAL, or LSTM_DROPOUT')
+    parser.add_argument('--model_arch', type=str, default='LSTM', help='LSTM')
+    parser.add_argument('--bidirectional', action='store_true', default=False, help='use bidirectional LSTM')
     parser.add_argument('--lr', type=float, default=None, help='learning rate')
     parser.add_argument('--optimizer', type=str, default=None, help='SGD, AdamW, or Adam')
-    parser.add_argument('--dropout_prob', type=float, default=None, help='dropout probability (for LSTM_DROPOUT)')
+    parser.add_argument('--dropout_prob', type=float, default=0.0, help='dropout probability (for LSTM_DROPOUT)')
     parser.add_argument('--emb_size', type=int, default=300, help='embedding size')
     parser.add_argument('--hidden_size', type=int, default=300, help='hidden size')
 
@@ -63,19 +41,13 @@ if __name__ == "__main__":
         exit()
     if args.mode == 'train':
         if args.model_arch is None:
-            print('Please provide a model architecture (LSTM, LSTM_BIDIRECTIONAL, LSTM_DROPOUT)')
+            print('Please provide a model architecture (LSTM)')
             exit()
         if args.lr is None:
             print('Please provide a learning rate')
             exit()
         if args.optimizer is None:
             print('Please provide an optimizer (SGD, AdamW, or Adam)')
-            exit()
-        if args.model_arch not in ['LSTM', 'LSTM_BIDIRECTIONAL', 'LSTM_DROPOUT']:
-            print('Model architecture must be one of: LSTM, LSTM_BIDIRECTIONAL, LSTM_DROPOUT')
-            exit()
-        if args.optimizer not in ['SGD', 'AdamW', 'Adam']:
-            print('Optimizer must be one of: SGD, AdamW, Adam')
             exit()
 
         param['model_arch'] = args.model_arch
@@ -90,7 +62,7 @@ if __name__ == "__main__":
         if args.multiple_runs is not None:
             param['multiple_runs'] = args.multiple_runs
 
-        experiment = args.experiment or f"{param['model_arch']}_lr{param['lr']}_{param['optimizer']}"
+        experiment = f"{param['model_arch']}_lr{param['lr']}_{param['optimizer']}"
         print("Training Mode")
         training(param, experiment)
     elif args.mode == 'inference':
