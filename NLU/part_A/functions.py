@@ -212,7 +212,6 @@ def training(param, experiment):
         print("Warning: No best model found across runs")
                 
 def testing(path_to_model):
-    def testing(param, model_path):
     # Load data
     train_loader, dev_loader, test_loader, lang = get_dataloaders()
     vocab_len = len(lang.word2id)
