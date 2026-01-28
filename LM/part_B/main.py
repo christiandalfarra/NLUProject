@@ -20,11 +20,12 @@ if __name__ == "__main__":
     parser.add_argument('--mode', type=str, default=None, help='train or evaluate, for training specify also model_arch, lr, optimizer adn also the values for dropout if u wnat to use it, for evaluation specify model_number')
     parser.add_argument('--lr', type=float, default=None, help='learning rate')
     parser.add_argument('--optimizer', type=str, default=None, help='SGD or NTAvSGD')
+
     parser.add_argument('--weight_tying', action='store_true', default=False, help='use weight tying or not')
     parser.add_argument('--var_dropout', action='store_true', default=False, help='use variational dropout or not')
     parser.add_argument('--emb_dropout', type=float, default=0.0, help='embedding dropout probability')
     parser.add_argument('--out_dropout', type=float, default=0.0, help='output dropout probability')
-    parser.add_argument('--nt_interval', type=int, default=None, help='NT-AvSGD interval for non-monotonicity check')
+    parser.add_argument('--nt_interval', type=int, default=3, help='NT-AvSGD interval for non-monotonicity check')
 
     parser.add_argument('--model_number', type=int, default=None, help='model number for evaluation')
 
@@ -47,12 +48,9 @@ if __name__ == "__main__":
         param['optimizer'] = args.optimizer
         param['weight_tying'] = args.weight_tying
         param['var_dropout'] = args.var_dropout
-        if args.var_dropout:
-            param['emb_dropout'] = args.emb_dropout
-            param['out_dropout'] = args.out_dropout
-        else:
-            param['emb_dropout'] = 0.0
-            param['out_dropout'] = 0.0
+
+        param['emb_dropout'] = args.emb_dropout
+        param['out_dropout'] = args.out_dropout
         if param['optimizer'] == 'NTAvSGD':
             if args.nt_interval is None:
                 print('Please provide an NT-AvSGD interval')

@@ -43,7 +43,6 @@ if __name__ == "__main__":
     parser.add_argument('--lr', type=float, default=None, help='learning rate')
     parser.add_argument('--optimizer', type=str, default='Adam', help='SGD, AdamW, or Adam')
     parser.add_argument('--dropout_prob', type=float, default=None, help='dropout probability')
-    parser.add_argument('--experiment', type=str, default=None, help='experiment name for the saved model')
 
     args = parser.parse_args()
 
@@ -68,7 +67,7 @@ if __name__ == "__main__":
         if args.dropout_prob is not None:
             param['dropout_prob'] = args.dropout_prob
 
-        experiment = args.experiment or f"bert_lr{param['lr']}_{param['optimizer']}"
+        experiment = f"bert_lr{param['lr']}_{param['optimizer']}"
         print("Training Mode")
         training(param, experiment)
     elif args.mode == 'inference':

@@ -119,14 +119,9 @@ def training(param, experiment):
     for run in tqdm(range(0, runs)):
         print(f"\nRun {run+1}/{runs}\n")
         #Create the model
-        if param['model_arch'] == 'LSTM':
-            model = ModelIAS(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, pad_index = PAD_TOKEN).to(DEVICE)
-        elif param['model_arch'] == 'LSTM_BIDIRECTIONAL':
-            model = ModelIAS(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, pad_index = PAD_TOKEN, bidirectional=True).to(DEVICE)
-        elif param['model_arch'] == 'LSTM_DROPOUT':
-            model = ModelIAS(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, pad_index = PAD_TOKEN, bidirectional=True, dropout_prob=param['dropout_prob']).to(DEVICE)
-        else:
-            raise ValueError("Model not recognized. Available models: LSTM, LSTM_BIDIRECTIONAL, LSTM_DROPOUT")
+        model = ModelIAS(param['hidden_size'], out_slot, out_intent, param['emb_size'], vocab_len, 
+                         bidirectional=param.get('bidirectional', False),
+                         dropout_prob=param.get('dropout_prob', 0))
     
         model.apply(init_weights)
         # Optimizer
