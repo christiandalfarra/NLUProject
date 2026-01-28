@@ -43,16 +43,6 @@ Train with dropout enabled:
 python main.py --mode train --lr 0.00005 --optimizer Adam --dropout_prob 0.3
 ```
 
-Train with AdamW optimizer:
-```bash
-python main.py --mode train --lr 0.00005 --optimizer AdamW
-```
-
-Train with SGD optimizer and dropout:
-```bash
-python main.py --mode train --lr 0.0001 --optimizer SGD --dropout_prob 0.2
-```
-
 ### 2. Evaluating a Model
 
 To evaluate a pre-trained model on the test set, set `--mode evaluate`.

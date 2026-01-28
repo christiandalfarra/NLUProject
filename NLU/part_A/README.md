@@ -50,7 +50,7 @@ python main.py --mode train --lr 0.0001 --bidirectional
 
 Train with dropout enabled:
 ```bash
-python main.py --mode train --lr 0.0001 --dropout_prob 0.3
+python main.py --mode train --lr 0.0001 --dropout_prob 0.2
 ```
 
 Train with custom architecture sizes:

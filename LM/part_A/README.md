@@ -38,12 +38,12 @@ python main.py --mode train --model_arch <ARCH> --lr <RATE> --optimizer <OPT> [o
 
 Train a simple RNN with SGD:
 ```bash
-python main.py --mode train --model_arch RNN --lr 1.0 --optimizer SGD
+python main.py --mode train --model_arch RNN --lr 0.5 --optimizer SGD
 ```
 
 Train an LSTM with AdamW and dropout:
 ```bash
-python main.py --mode train --model_arch LSTM --lr 0.001 --optimizer AdamW --emb_dropout 0.2 --out_dropout 0.2
+python main.py --mode train --model_arch LSTM --lr 0.0002 --optimizer AdamW --emb_dropout 0.2 --out_dropout 0.2
 ```
 
 ### 2. Evaluating a Model

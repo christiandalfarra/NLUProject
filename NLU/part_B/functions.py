@@ -109,7 +109,16 @@ def training(params, experiment):
                     intent_out=out_intent, 
                     dropout_prob=params['dropout_prob']).to(DEVICE)
     
-    optimizer = torch.optim.AdamW(model.parameters(), lr=params['lr'])
+    if params['optimizer'] == 'SGD':
+        optimizer = torch.optim.SGD(model.parameters(), lr=params['lr'])
+    elif params['optimizer'] == 'AdamW':
+        optimizer = torch.optim.AdamW(model.parameters(), lr=params['lr'])
+    elif params['optimizer'] == 'Adam':
+        optimizer = torch.optim.Adam(model.parameters(), lr=params['lr'])
+    else:
+        raise ValueError("Optimizer not recognized. Available optimizers: SGD, AdamW, Adam")
+
+    optimizer = torch.optim.Adam(model.parameters(), lr=params['lr'])
 
     criterion_slots = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN)
     criterion_intents = nn.CrossEntropyLoss()

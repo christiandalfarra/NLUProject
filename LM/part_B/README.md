@@ -53,7 +53,7 @@ python main.py --mode train --lr 0.5 --optimizer SGD --var_dropout --emb_dropout
 
 Train with NT-AvSGD optimizer:
 ```bash
-python main.py --mode train --lr 0.5 --optimizer NTAvSGD --nt_interval 3
+python main.py --mode train --lr 0.5 --optimizer NTAvSGD --nt_interval 3 
 ```
 
 Train with all advanced features:
@@ -92,6 +92,7 @@ python main.py --mode evaluate --model_number 1
 
 Training loop uses these default parameters defined in `main.py`:
 
+- Architecture: LSTM
 - Embedding Size: 350
 - Hidden Size: 350
 - Embedding Dropout: 0.0
