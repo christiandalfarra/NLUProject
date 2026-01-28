@@ -34,13 +34,12 @@ def init_weights(mat):
 def train_loop(data, optimizer, criterion_slots, criterion_intents, model, clip=5):
     model.train()
     loss_array = []
-    device = next(model.parameters()).device
     for sample in data:
         optimizer.zero_grad() # Zeroing the gradient
-        utterances = sample['utterances'].to(device)
-        slots_len = sample['slots_len'].to(device)
-        intents = sample['intents'].to(device)
-        y_slots = sample['y_slots'].to(device)
+        utterances = sample['utterances']
+        slots_len = sample['slots_len']
+        intents = sample['intents']
+        y_slots = sample['y_slots']
         slots, intent = model(utterances, slots_len)
         loss_intent = criterion_intents(intent, intents)
         loss_slot = criterion_slots(slots, y_slots)
