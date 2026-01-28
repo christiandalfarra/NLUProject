@@ -8,8 +8,6 @@ from functions import *
 from utils import *
 param ={
 
-    'dropout_prob': 0.3,
-
     'lr' : 0.0001,
     'clip': 5,
     'n_epochs': 50,

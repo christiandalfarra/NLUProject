@@ -26,10 +26,12 @@ def load_data(path):
     return dataset
 
 class Lang():
-    def __init__(self, words, intents, slots, cutoff=0):
+    def __init__(self, words, intents=None, slots=None, cutoff=0, slot2id=None, intent2id=None):
+        if words is None:
+            words = []
         self.word2id = self.w2id(words, cutoff=cutoff, unk=True)
-        self.slot2id = self.lab2id(slots)
-        self.intent2id = self.lab2id(intents, pad=False)
+        self.slot2id = slot2id if slot2id is not None else self.lab2id(slots)
+        self.intent2id = intent2id if intent2id is not None else self.lab2id(intents, pad=False)
         self.id2word = {v:k for k, v in self.word2id.items()}
         self.id2slot = {v:k for k, v in self.slot2id.items()}
         self.id2intent = {v:k for k, v in self.intent2id.items()}
@@ -160,7 +162,7 @@ def collate_fn(data):
 
     return new_item
 
-def get_dataloaders():
+def get_dataloaders(slot2id=None, intent2id=None):
     tmp_train_raw = load_data(os.path.join("..", "dataset", "train.json"))
     test_raw = load_data(os.path.join("..", "dataset", "test.json"))
 
@@ -189,10 +191,11 @@ def get_dataloaders():
     words = sum([x['utterance'].split() for x in train_raw], []) # No set() since we want to compute the cutoff
     corpus = train_raw + dev_raw + test_raw
 
-    slots = set(sum([line['slots'].split() for line in corpus],[]))
-    intents = set([line['intent'] for line in corpus])
+    # Sorting makes label ids deterministic across runs.
+    slots = sorted(set(sum([line['slots'].split() for line in corpus],[])))
+    intents = sorted(set([line['intent'] for line in corpus]))
 
-    lang = Lang(words, intents, slots, cutoff=0)
+    lang = Lang(words, intents, slots, cutoff=0, slot2id=slot2id, intent2id=intent2id)
 
     # Create our datasets
     train_dataset = IntentsAndSlots(train_raw, lang)

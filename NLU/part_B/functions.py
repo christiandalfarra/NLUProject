@@ -154,15 +154,36 @@ def training(params, experiment):
     results_test, report_intent_test, _ = eval_loop(test_loader, criterion_slots, criterion_intents, best_model, lang)
     print('Slot F1', results_test['total']['f'])
     print('Intent Acc', report_intent_test['accuracy'])
-    torch.save(best_model.state_dict(), f'bin/{experiment}.pt')
+    save_path = f'bin/{experiment}.pt'
+    torch.save(
+        {
+            "model_state_dict": best_model.state_dict(),
+            "slot2id": lang.slot2id,
+            "intent2id": lang.intent2id,
+            "dropout_prob": params['dropout_prob'],
+        },
+        save_path,
+    )
 
 def testing(path):
-    # Load data
-    _, _, test_loader, lang = get_dataloaders()
-    
     # Load the saved model
     print(f"Loading model from {path}")
-    model_state_dict = torch.load(path, map_location=DEVICE)
+    checkpoint = torch.load(path, map_location=DEVICE)
+    if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
+        model_state_dict = checkpoint["model_state_dict"]
+        slot2id = checkpoint.get("slot2id")
+        intent2id = checkpoint.get("intent2id")
+        dropout_prob = checkpoint.get("dropout_prob", 0.1)
+    else:
+        model_state_dict = checkpoint
+        slot2id = None
+        intent2id = None
+        dropout_prob = 0.1
+
+    # Load data with the same label mapping used in training (if available)
+    if slot2id is None or intent2id is None:
+        print("Warning: checkpoint has no label mapping; results may be incorrect.")
+    _, _, test_loader, lang = get_dataloaders(slot2id=slot2id, intent2id=intent2id)
 
     vocab_len = len(lang.word2id)
     out_slot = len(lang.slot2id)
@@ -170,11 +191,11 @@ def testing(path):
     
     # Create the model with the same architecture
     model = BertIAS(slot_out=out_slot, 
-                    intent_out=out_intent).to(DEVICE)
+                    intent_out=out_intent,
+                    dropout_prob=dropout_prob).to(DEVICE)
     
     # Load the trained weights
     model.load_state_dict(model_state_dict)
-    model.to(DEVICE)
     
     # Define loss criteria
     criterion_slots = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN)
