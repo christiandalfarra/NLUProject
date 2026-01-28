@@ -9,7 +9,7 @@ param ={
 
     'lr' : 0.0001,
     'clip': 5,
-    'n_epochs': 100,
+    'n_epochs': 200,
     'patience': 3,
 }
 
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser.add_argument('--optimizer', type=str, default='Adam', help='SGD, AdamW, or Adam')
     parser.add_argument('--dropout_prob', type=float, default=0.0, help='dropout probability')
     parser.add_argument('--emb_size', type=int, default=300, help='embedding size')
-    parser.add_argument('--hidden_size', type=int, default=300, help='hidden size')
+    parser.add_argument('--hidden_size', type=int, default=200, help='hidden size')
 
     parser.add_argument('--multiple_runs', type=int, default=5, help='number of runs with different initialization')
 
