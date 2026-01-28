@@ -49,24 +49,21 @@ if __name__ == "__main__":
         param['hidden_size'] = args.hidden_size
 
     if mode == 'train':
-        training(param, experiment=f"exp_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}_embDO_{param['emb_dropout']}_outDO_{param['out_dropout']}")
+        training(
+            param, experiment=f"exp_{param['model_arch']}_lr{param['lr']}_{param['optimizer']}_{'embDO_' + str(param['emb_dropout']) if param['emb_dropout'] > 0 else ''}_{'outDO_' + str(param['out_dropout']) if param['out_dropout'] > 0 else ''}")
     elif mode == 'evaluate':
         exp_number = args.model_number
         if exp_number is None:
             print('Please provide a model number to evaluate')
             exit()
         if exp_number == 1:
-            param['model_arch'] = 'RNN'
-            path = f'bin/RNN.pt'
+            path = f'bin/exp_RNN_lr0.5_SGD.pt'
         elif exp_number == 2:
-            param['model_arch'] = 'LSTM'
-            path = f'bin/LSTM.pt'
+            path = f'bin/exp_LSTM_lr0.5_SGD.pt'
         elif exp_number == 3:
-            param['model_arch'] = 'LSTM'
-            path = f'bin/LSTM_DO.pt'
+            path = f'bin/exp_LSTM_lr0.5_SGD_embDO_0.2_outDO_0.2.pt'
         elif exp_number == 4:
-            param['model_arch'] = 'LSTM'
-            path = f'bin/LSTM_DO_AdamW.pt'
+            path = f'bin/exp_LSTM_lr0.0002_AdamW_embDO_0.2_outDO_0.2.pt'
         else: 
             print('Model number not recognized')
             exit()

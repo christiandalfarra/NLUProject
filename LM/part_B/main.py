@@ -63,9 +63,9 @@ if __name__ == "__main__":
             print('Please provide a model number to evaluate')
             exit()
         if exp_number == 1:
-            path = f'bin/first.pt'
+            path = f'bin/exp_LSTM_lr0.5_SGD.pt'
         elif exp_number == 2:
-            path = f'bin/second.pt'
+            path = f'bin/exp_LSTM_WT.pt'
         elif exp_number == 3:
             path = f'bin/third.pt'
         elif exp_number == 4:
