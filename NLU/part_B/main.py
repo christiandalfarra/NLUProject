@@ -6,27 +6,6 @@ import argparse
 # Import everything from functions.py file
 from functions import *
 from utils import *
-""" 
-    'mode':
-        'train' : to train the model
-        'inference' : to test the model
-    'model_arch' have different options related to the experiments:
-        'LSTM' : Simple LSTM
-        'LSTM_BIDIRECTIONAL' : Bidirectional LSTM
-        'LSTM_DROPOUT' : LSTM Bidirectional with dropout embedding layer and the last linear layer
-
-    'emb_size': size of the embedding layer
-    'hidden_size': size of the hidden layer
-    'dropout_prob': dropout probability (only for the model with dropout)
-    'lr' : learning rate
-    'clip': gradient clipping value
-    'patience': number of epochs to wait before early stopping
-
-    'n_epochs': number of epochs
-    'multiple_runs': number of runs with different weight initialization
-
-    'optimizer': optimizer to use. Available optimizers: 'SGD' or 'AdamW' or 'Adam'
-    """
 param ={
 
     'dropout_prob': 0.3,
@@ -62,8 +41,6 @@ if __name__ == "__main__":
 
         param['lr'] = args.lr
         param['optimizer'] = args.optimizer
-        if args.emb_size is not None:
-            param['emb_size'] = args.emb_size
         if args.dropout_prob is not None:
             param['dropout_prob'] = args.dropout_prob
 

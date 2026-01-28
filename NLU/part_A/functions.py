@@ -226,9 +226,6 @@ def training(param, experiment):
 def testing(path_to_model):
     # Load data
     train_loader, dev_loader, test_loader, lang = get_dataloaders()
-    vocab_len = len(lang.word2id)
-    out_slot = len(lang.slot2id)
-    out_intent = len(lang.intent2id)
     
     # Load the saved model
     print(f"Loading model from {model_path}")
@@ -236,6 +233,11 @@ def testing(path_to_model):
     
     model_state_dict = saved_model['model_state_dict']
     saved_params = saved_model['params']
+    lang = saved_model['lang']
+
+    vocab_len = len(lang.word2id)
+    out_slot = len(lang.slot2id)
+    out_intent = len(lang.intent2id)
     
     # Create the model with the same architecture
     model = ModelIAS(
@@ -267,11 +269,9 @@ def testing(path_to_model):
     )
     
     # Print results
-    print('\n' + '='*50)
     print('Test Set Results:')
     print(f"Slot F1: {results_test['total']['f']:.3f}")
     print(f"Intent Accuracy: {report_intent_test['accuracy']:.3f}")
-    print('='*50 + '\n')
     
     return results_test, report_intent_test
    
