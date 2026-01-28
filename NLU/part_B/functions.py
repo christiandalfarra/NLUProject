@@ -38,7 +38,6 @@ def train_loop(data, optimizer, criterion_slots, criterion_intents, model, clip=
 def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     model.eval()
     loss_array = []
-    device = next(model.parameters()).device
     
     ref_intents = []
     hyp_intents = []
@@ -50,10 +49,10 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
 
     with torch.no_grad(): # It used to avoid the creation of computational graph
         for sample in data:
-            utterances = sample['utterances'].to(device)
-            attention_mask = sample['attention_mask'].to(device)
-            intents_t = sample['intents'].to(device)
-            y_slots_t = sample['y_slots'].to(device)
+            utterances = sample['utterances'].to(DEVICE)
+            attention_mask = sample['attention_mask'].to(DEVICE)
+            intents_t = sample['intents'].to(DEVICE)
+            y_slots_t = sample['y_slots'].to(DEVICE)
             slots, intents = model(utterances, attention_mask)
 
             loss_intent = criterion_intents(intents, intents_t)
