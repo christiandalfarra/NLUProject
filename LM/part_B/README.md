@@ -53,12 +53,12 @@ python main.py --mode train --lr 0.5 --optimizer SGD --var_dropout --emb_dropout
 
 Train with NT-AvSGD optimizer:
 ```bash
-python main.py --mode train --lr 0.5 --optimizer NTAvSGD --nt_interval 3 
+python main.py --mode train --lr 0.5 --optimizer NTAvSGD --nt_interval 5 
 ```
 
 Train with all advanced features:
 ```bash
-python main.py --mode train --lr 0.5 --optimizer NTAvSGD --nt_interval 3 --weight_tying --var_dropout --emb_dropout 0.2 --out_dropout 0.2
+python main.py --mode train --lr 0.5 --optimizer NTAvSGD --nt_interval 5 --weight_tying --var_dropout --emb_dropout 0.2 --out_dropout 0.2
 ```
 
 ### 2. Evaluating a Model
