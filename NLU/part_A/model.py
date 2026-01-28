@@ -28,6 +28,10 @@ class ModelIAS(nn.Module):
             self.dropout = False
         
     def forward(self, utterance, seq_lengths):
+        # Ensure inputs are on the same device as the embedding weights
+        device = self.embedding.weight.device
+        if utterance.device != device:
+            utterance = utterance.to(device)
         # utterance.size() = batch_size X seq_len
         utt_emb = self.embedding(utterance) # utt_emb.size() = batch_size X seq_len X emb_size
         
