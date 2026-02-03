@@ -65,9 +65,6 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
             gt_intents = [lang.id2intent[x] for x in sample['intents'].tolist()]
             ref_intents.extend(gt_intents)
             hyp_intents.extend(out_intents)
-
-            print(out_intents[0], gt_intents[0])
-            print(ref_intents[0], hyp_intents[0])
             
             # Slot inference 
             output_slots = torch.argmax(slots, dim=1)
