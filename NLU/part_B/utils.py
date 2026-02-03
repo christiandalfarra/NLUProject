@@ -109,8 +109,8 @@ class IntentsAndSlots (data.Dataset):
                 # first token get the slot label, other tokens get the pad token
                 slot_id_seq.extend([mapper[slot_label]] + [PAD_TOKEN] * (len(tokensBert) - 1))
             
-            utt_ids.append(token_ids)
-            slot_ids.append(slot_id_seq)
+            utt_ids.append([self.tokenizer.cls_token_id] + token_ids + [self.tokenizer.sep_token_id])
+            slot_ids.append([PAD_TOKEN] + slot_id_seq + [PAD_TOKEN])  # Add PAD_TOKEN at the beginning and end
                     
         return utt_ids, slot_ids
         

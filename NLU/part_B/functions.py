@@ -35,6 +35,7 @@ def train_loop(data, optimizer, criterion_slots, criterion_intents, model, clip=
         optimizer.step() # Update the weights
     return loss_array
 
+TOKENIZER = AutoTokenizer.from_pretrained('bert-base-uncased')
 def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     model.eval()
     loss_array = []
@@ -44,8 +45,6 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     
     ref_slots = []
     hyp_slots = []
-
-    tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 
     with torch.no_grad(): # It used to avoid the creation of computational graph
         for sample in data:
@@ -69,24 +68,36 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
             # Slot inference 
             output_slots = torch.argmax(slots, dim=1)
             for id_seq, seq in enumerate(output_slots):
-                utt_ids = sample['utterance'][id_seq].tolist()
-                print(sample['utterance'][id_seq])
+                length = sample['slots_len'][id_seq].item()
+                utt_ids = sample['utterance'][id_seq][:length].tolist()
                 gt_ids = sample['y_slots'][id_seq].tolist()
-                print(sample['y_slots'][id_seq])
-                print(seq)
-
 
                 # Get the original words ids using the tokenizer
-                tokens = tokenizer.convert_ids_to_tokens(utt_ids)
+                tokens = TOKENIZER.convert_ids_to_tokens(utt_ids)
+                tags = [lang.id2slot[x] for x in gt_ids[:length]]
+                seq = seq[:length]
 
-                # Prepare for evaluation, remove padding
+                # Prepare for evaluation, remove special tokens and subwords
                 tmp_ref = []
                 tmp_hyp = []
 
-                for i, gt_id in enumerate(gt_ids):
-                    if gt_id != PAD_TOKEN:
-                        tmp_ref.append((tokens[i], lang.id2slot[gt_id]))
-                        tmp_hyp.append((tokens[i], lang.id2slot[seq[i].item()]))
+                for i in range(len(tags)):
+                    # 1. Skip BERT special tokens ([CLS] at start, [SEP] at end)
+                    if tokens[i] in [TOKENIZER.cls_token, TOKENIZER.sep_token]:
+                        continue
+                    
+                    # 2. Skip subword tokens (usually indicated by '##' in BERT)
+                    # We only evaluate the 'head' token of each word
+                    if tokens[i].startswith("##"):
+                        continue
+                    
+                    # 3. Skip actual padding tokens if any remain within the length
+                    if tags[i] == 'pad':
+                        continue
+
+                    # If we reach here, it's a valid word head
+                    tmp_ref.append((tokens[i], tags[i]))
+                    tmp_hyp.append((tokens[i], lang.id2slot[seq[i].item()]))
 
                 ref_slots.append(tmp_ref)
                 hyp_slots.append(tmp_hyp)
@@ -98,8 +109,6 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
         hyp_s = set([x[1] for x in hyp_slots])
         results = {"total":{"f":0}}
         
-    print(ref_slots[0])
-    print(hyp_slots[0])
     report_intent = classification_report(ref_intents, hyp_intents, 
                                           zero_division=False, output_dict=True)
     return results, report_intent, loss_array
@@ -123,8 +132,6 @@ def training(params, experiment):
         optimizer = torch.optim.Adam(model.parameters(), lr=params['lr'])
     else:
         raise ValueError("Optimizer not recognized. Available optimizers: SGD, AdamW, Adam")
-
-    optimizer = torch.optim.Adam(model.parameters(), lr=params['lr'])
 
     criterion_slots = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN)
     criterion_intents = nn.CrossEntropyLoss()
