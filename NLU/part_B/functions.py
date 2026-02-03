@@ -83,16 +83,16 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
                 tmp_hyp = []
 
                 for i in range(len(tags)):
-                    # 1. Skip BERT special tokens ([CLS] at start, [SEP] at end)
+                    # Skip BERT special tokens ([CLS] at start, [SEP] at end)
                     if tokens[i] in [TOKENIZER.cls_token, TOKENIZER.sep_token]:
                         continue
                     
-                    # 2. Skip subword tokens (usually indicated by '##' in BERT)
+                    # Skip subword tokens (usually indicated by '##' in BERT)
                     # We only evaluate the 'head' token of each word
                     if tokens[i].startswith("##"):
                         continue
                     
-                    # 3. Skip actual padding tokens if any remain within the length
+                    # Skip actual padding tokens if any remain within the length
                     if tags[i] == PAD_TOKEN:
                         continue
 
