@@ -73,9 +73,11 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
             output_slots = torch.argmax(slots, dim=1)
             for id_seq, seq in enumerate(output_slots):
                 utt_ids = sample['utterance'][id_seq].tolist()
+                print(sample['utterance'][id_seq])
                 gt_ids = sample['y_slots'][id_seq].tolist()
-                print(utt_ids[:10])
-                print(gt_ids[:10])
+                print(sample['y_slots'][id_seq])
+                print(seq)
+
 
                 # Get the original words ids using the tokenizer
                 tokens = tokenizer.convert_ids_to_tokens(utt_ids)
