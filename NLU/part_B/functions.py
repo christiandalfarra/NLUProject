@@ -68,6 +68,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
             
             # Slot inference 
             output_slots = torch.argmax(slots, dim=1)
+            print(output_slots)
             for id_seq, seq in enumerate(output_slots):
                 utt_ids = sample['utterance'][id_seq].tolist()
                 gt_ids = sample['y_slots'][id_seq].tolist()
