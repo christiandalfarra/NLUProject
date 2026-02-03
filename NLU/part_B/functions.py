@@ -94,6 +94,8 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
         hyp_s = set([x[1] for x in hyp_slots])
         results = {"total":{"f":0}}
         
+    print(ref_slots[0])
+    print(hyp_slots[0])
     report_intent = classification_report(ref_intents, hyp_intents, 
                                           zero_division=False, output_dict=True)
     return results, report_intent, loss_array
