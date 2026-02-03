@@ -36,6 +36,7 @@ def train_loop(data, optimizer, criterion_slots, criterion_intents, model, clip=
     return loss_array
 
 TOKENIZER = AutoTokenizer.from_pretrained('bert-base-uncased')
+PAD_TOKEN = 0
 def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     model.eval()
     loss_array = []
@@ -92,7 +93,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
                         continue
                     
                     # 3. Skip actual padding tokens if any remain within the length
-                    if tags[i] == 'pad':
+                    if tags[i] == PAD_TOKEN:
                         continue
 
                     # If we reach here, it's a valid word head
