@@ -105,9 +105,11 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     try:            
         results = evaluate(ref_slots, hyp_slots)
     except Exception as ex:
+        print("Warning:", ex)
         # Sometimes the model predicts a class that is not in REF
         ref_s = set([x[1] for x in ref_slots])
         hyp_s = set([x[1] for x in hyp_slots])
+        print(hyp_s.difference(ref_s))
         results = {"total":{"f":0}}
         
     report_intent = classification_report(ref_intents, hyp_intents, 
