@@ -74,6 +74,8 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
             for id_seq, seq in enumerate(output_slots):
                 utt_ids = sample['utterance'][id_seq].tolist()
                 gt_ids = sample['y_slots'][id_seq].tolist()
+                print(utt_ids[:10])
+                print(gt_ids[:10])
 
                 # Get the original words ids using the tokenizer
                 tokens = tokenizer.convert_ids_to_tokens(utt_ids)
